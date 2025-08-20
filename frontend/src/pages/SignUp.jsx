@@ -10,6 +10,8 @@ const SignUp = () => {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -17,13 +19,12 @@ const SignUp = () => {
     });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      console.log("this is the frontend data",formData);
-      
+      console.log("this is the frontend data", formData);
+
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -33,6 +34,20 @@ const SignUp = () => {
       });
 
       const data = await res.json();
+      console.log("this is the  data coming from the backend", data);
+
+      if (!res.ok) {
+        if (data.errors) {
+          const newErrors = {};
+          data.errors.forEach((err) => {
+            newErrors[err.path] = err.msg;
+          });
+          setErrors(newErrors);
+        } else if (data.error) {
+          alert(data.error);
+        }
+        return;
+      }
       console.log("User created:", data);
     } catch (err) {
       console.error("Error:", err);
@@ -69,6 +84,9 @@ const SignUp = () => {
               placeholder="Name"
               className="w-full p-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+            )}
             <input
               onChange={handleChange}
               value={formData.email}
@@ -77,6 +95,9 @@ const SignUp = () => {
               placeholder="Email or Phone Number"
               className="w-full p-3 border-b border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
             <input
               onChange={handleChange}
               value={formData.password}
@@ -85,6 +106,9 @@ const SignUp = () => {
               placeholder="Password"
               className="w-full p-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
 
             <button
               type="submit"
