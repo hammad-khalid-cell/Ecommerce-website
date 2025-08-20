@@ -4,6 +4,7 @@ import { query, validationResult, checkSchema, matchedData } from "express-valid
 import cors from "cors";
 import { checkUserValidationSchema } from "./utils/checkUserValidationSchema.mjs";
 import { User } from "./models/mongoose/schema/users.mjs";
+import { hashPassword } from "./utils/helper.mjs";
 
 
 
@@ -27,9 +28,9 @@ app.get("/", (request, response) => {
 })
 
 
-app.get("/api/users", (request, response) => {
-    response.json(users);
-})
+// app.get("/api/users", (request, response) => {
+//     response.json(users);
+// })
 
 app.post(
   "/api/users",
@@ -51,7 +52,9 @@ app.post(
         return response.status(400).json({ error: "User already exists" });
       }
 
-      const newUser = new User({ username, email, password });
+      const hashedpassword = await hashPassword(password);
+
+      const newUser = new User({ username, email, password: hashedpassword });
       const savedUser = await newUser.save();
 
       response.status(201).json(savedUser);

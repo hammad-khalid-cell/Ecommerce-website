@@ -22,7 +22,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      console.log(formData);
+      console.log("this is the frontend data",formData);
       
       const res = await fetch("/api/users", {
         method: "POST",
