@@ -49,7 +49,7 @@ app.post(
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return response.status(400).json({ error: "User already exists" });
+        return response.status(400).json({ error: "User already exists , logIn" });
       }
 
       const hashedpassword = await hashPassword(password);
