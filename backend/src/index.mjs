@@ -23,6 +23,10 @@ app.get("/", (request, response)=>{
 app.get("/api/users", (request, response)=>{
     response.json(users);
 })
+
+app.post("/api/signup",(request, response)=>{
+    
+})
 const port  =  process.env.PORT || 3000;
 
 app.listen(port, ()=>{
