@@ -5,7 +5,7 @@ import googleIcon from "../assets/images/login/Icon-Google.png";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -22,6 +22,8 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
+      console.log(formData);
+      
       const res = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -32,12 +34,11 @@ const SignUp = () => {
 
       const data = await res.json();
       console.log("User created:", data);
-      alert("Signup successful!");
     } catch (err) {
       console.error("Error:", err);
     }
   };
-  
+
   return (
     <main className="container  mt-10  mb-20 pr-10 ">
       <div className="flex flex-col  md:flex-row items-center justify-between gap-16 ">
@@ -63,7 +64,7 @@ const SignUp = () => {
             <input
               onChange={handleChange}
               value={formData.name}
-              name="name"
+              name="username"
               type="text"
               placeholder="Name"
               className="w-full p-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
