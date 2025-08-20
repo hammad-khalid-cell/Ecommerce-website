@@ -44,7 +44,9 @@ const SignUp = () => {
           });
           setErrors(newErrors);
         } else if (data.error) {
-          alert(data.error);
+    setErrors({ general: data.error });
+         console.log(data.error);
+         console.log(errors);
         }
         return;
       }
@@ -109,6 +111,10 @@ const SignUp = () => {
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             )}
+             {errors.general && (
+              <p className="text-red-500 text-sm mt-1">{errors.general}</p>
+            )}
+
 
             <button
               type="submit"
