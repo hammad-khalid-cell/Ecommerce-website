@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Use Link for navigation
+import { generatePath, Link, useNavigate } from "react-router-dom"; // Use Link for navigation
 import sideImage from "../assets/images/login/sideImage.png";
+import googleIcon from "../assets/images/login/Icon-Google.png";
 
 // Note: Local image imports are replaced with placeholder URLs to make the code runnable.
 // import sideImage from "../assets/images/login/sideImage.png";
@@ -11,6 +12,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
 
@@ -21,6 +23,10 @@ const Login = () => {
     });
   };
 
+  const googleAuth = () => {
+    window.open("http://localhost:3000/auth/google", "_self");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -28,35 +34,35 @@ const Login = () => {
       console.log("this is the frontend data", formData);
 
       // This is a placeholder for your API call.
-      // const res = await fetch("/api/users/login", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+      const res = await fetch("/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // const data = await res.json();
-      // console.log("this is the data coming from the backend", data);
+      const data = await res.json();
+      console.log("this is the data coming from the backend", data);
+      if (res.ok) {
+        if (data.errors) {
+          const newErrors = {};
+          data.error.forEach((err) => {
+            newErrors[err.path] = err.msg;
+          });
+          setErrors(newErrors);
+        } else if (data.error) {
+          setErrors({ general: data.error });
+        } else {
+          console.log("User logged in:", data);
+          navigate("/");
+        }
+        return;
+      }
 
-      // if (!res.ok) {
-      //   if (data.errors) {
-      //     const newErrors = {};
-      //     data.errors.forEach((err) => {
-      //       newErrors[err.path] = err.msg;
-      //     });
-      //     setErrors(newErrors);
-      //   } else if (data.error) {
-      //     setErrors({ general: data.error });
-      //   }
-      //   return;
-      // }
-      // console.log("User logged in:", data);
-      
       // Placeholder for successful login
       setErrors({});
       console.log("User logged in with email:", formData.email);
-
     } catch (err) {
       console.error("Error:", err);
     }
@@ -77,9 +83,7 @@ const Login = () => {
 
         {/* Log-in Form Section */}
         <div className="w-1/3 md:w-2/5 bg-white p-8 rounded-lg">
-          <h2 className="text-3xl font-bold  mb-2">
-            Log in to Exclusive
-          </h2>
+          <h2 className="text-3xl font-bold  mb-2">Log in to Exclusive</h2>
           <p className="text-sm text-gray-500  mb-8">
             Enter your details below
           </p>
@@ -90,7 +94,7 @@ const Login = () => {
               value={formData.email}
               name="email"
               type="email"
-              placeholder="Email or Phone Number"
+              placeholder="Email    "
               className="w-full py-3  border-b border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.email && (
@@ -111,19 +115,27 @@ const Login = () => {
               <p className="text-red-500 text-sm mt-1">{errors.general}</p>
             )}
 
-            <div className="flex items-center justify-between pt-4">
+            <div className="flex flex-col items-center justify-between gap-y-4 pt-4">
+              <button
+                onClick={googleAuth}
+                type="button"
+                className="w-full flex items-center justify-center space-x-2 bg-white text-gray-700 font-semibold py-3 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors duration-200"
+              >
+                <img src={googleIcon} alt="" />
+                <span>Continue with Google</span>
+              </button>
               <button
                 type="submit"
-                className="w-1/2 bg-red-500 text-white font-semibold py-3 rounded-md hover:bg-red-600 transition-colors duration-200"
+                className="w-full bg-red-500 text-white font-semibold py-3 rounded-md hover:bg-red-600 transition-colors duration-200"
               >
                 Log In
               </button>
-              <a
-                href="#"
+              <Link
+                to="/ForgetPassword"
                 className="text-red-500 text-sm font-medium hover:underline transition-colors duration-200"
               >
                 Forgot Password?
-              </a>
+              </Link>
             </div>
           </form>
 

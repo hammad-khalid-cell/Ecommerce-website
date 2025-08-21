@@ -4,7 +4,7 @@ import { query, validationResult, checkSchema, matchedData } from "express-valid
 import cors from "cors";
 import { checkUserValidationSchema } from "./utils/checkUserValidationSchema.mjs";
 import { User } from "./models/mongoose/schema/users.mjs";
-import { hashPassword } from "./utils/helper.mjs";
+import { hashPassword, comparePassword } from "./utils/helper.mjs";
 import "./strategies/google-strategy.mjs"
 import passport from "passport";
 import session from "express-session";
@@ -42,6 +42,48 @@ app.get("/", (request, response) => {
     response.send("server is ready")
 })
 
+app.post(
+  "/api/users/login",
+  async (request, response) => {
+    try {
+      const { email, password } = request.body;
+
+      // 1. Validate input
+      if (!email || !password) {
+        return response.status(400).json({ error: "Email and password are required" });
+      }
+
+      // 2. Find user by email
+      const user = await User.findOne({ email });
+      if (!user) {
+        return response.status(401).json({ error: "Invalid email or password" });
+      }
+
+      // 3. Compare passwords
+      const isMatch = await comparePassword(password, user.password);
+      if (!isMatch) {
+        return response.status(401).json({ error: "Invalid email or password" });
+      }else{
+         response.json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      });
+      response.redirect("http://localhost:5173/")
+
+      }
+
+      // 4. Success → return user info (or JWT if you want token auth)
+     
+    } catch (err) {
+      console.error("Login error:", err);
+      response.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
 
 app.post(
   "/api/users",

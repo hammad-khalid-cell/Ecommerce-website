@@ -20,6 +20,10 @@ const SignUp = () => {
     });
   };
 
+ const googleAuth = () => {
+  window.open("http://localhost:3000/auth/google", "_self");
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,6 +37,7 @@ const SignUp = () => {
         },
         body: JSON.stringify(formData),
       });
+      
 
       const data = await res.json();
       console.log("this is the  data coming from the backend", data);
@@ -124,6 +129,7 @@ const SignUp = () => {
             </button>
 
             <button
+            onClick={googleAuth}
               type="button"
               className="w-full flex items-center justify-center space-x-2 bg-white text-gray-700 font-semibold py-3 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors duration-200"
             >
