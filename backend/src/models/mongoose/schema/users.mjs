@@ -1,23 +1,35 @@
 import mongoose from "mongoose";
 
-
 const userSchema = new mongoose.Schema({
-
-    username: {
-        type: mongoose.Schema.Types.String,
-        required: true,
-        unique: true,
+  username: {
+    type: String,
+    required: function () {
+      return !this.googleId; // required only if not using Google
     },
-    email: {
-        type: mongoose.Schema.Types.String,
-        required: true,
+    unique: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true, // email should always be unique
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: function () {
+      return !this.googleId; // required only if not using Google
     },
-    password: {
-        type: mongoose.Schema.Types.String,
-        required: true,
-    },
-}
+  },
+  googleId: {
+    type: String, // only for Google OAuth users
+    unique: true,
+    sparse: true, // prevents conflicts with normal users
+  },
+  profilePic: {
+    type: String, // optional (Google profile image URL)
+  },
+}, { timestamps: true });
 
-)
-
-export const User = mongoose.model("User", userSchema)
+export const User = mongoose.model("User", userSchema);

@@ -5,15 +5,30 @@ import cors from "cors";
 import { checkUserValidationSchema } from "./utils/checkUserValidationSchema.mjs";
 import { User } from "./models/mongoose/schema/users.mjs";
 import { hashPassword } from "./utils/helper.mjs";
-
+import "./strategies/google-strategy.mjs"
+import passport from "passport";
+import session from "express-session";
+import authRoutes from "./authRoutes.mjs"
 
 
 
 const app = express();
 
 
+app.use(
+  session({
+    secret: "hammad",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.session());
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
+app.use(passport.initialize());
+app.use("/auth", authRoutes);
+
 
 mongoose
     .connect("mongodb://localhost:27017/project")
@@ -27,10 +42,6 @@ app.get("/", (request, response) => {
     response.send("server is ready")
 })
 
-
-// app.get("/api/users", (request, response) => {
-//     response.json(users);
-// })
 
 app.post(
   "/api/users",
