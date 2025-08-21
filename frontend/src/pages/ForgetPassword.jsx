@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; 
-// Note: Local image imports are replaced with placeholder URLs to make the code runnable.
-// import sideImage from "../assets/images/login/sideImage.png";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -17,46 +15,30 @@ const ForgotPassword = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setErrors({});
 
-    try {
-      console.log("this is the frontend data", formData);
+  try {
+    const response = await fetch("http://localhost:3000/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email }),
+    });
 
-      // This is a placeholder for your API call.
-      // const res = await fetch("/api/users/forgot-password", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+    const data = await response.json();
 
-      // const data = await res.json();
-      // console.log("this is the data coming from the backend", data);
-
-      // if (!res.ok) {
-      //   if (data.errors) {
-      //     const newErrors = {};
-      //     data.errors.forEach((err) => {
-      //       newErrors[err.path] = err.msg;
-      //     });
-      //     setErrors(newErrors);
-      //   } else if (data.error) {
-      //     setErrors({ general: data.error });
-      //   }
-      //   return;
-      // }
-      // console.log("Password reset email sent:", data);
-      
-      // Placeholder for successful action
-      setErrors({});
-      console.log("Password reset request submitted for email:", formData.email);
-
-    } catch (err) {
-      console.error("Error:", err);
+    if (!response.ok) {
+      setErrors({ general: data.error || "Something went wrong" });
+    } else {
+      alert("Password reset link sent! Check console for the link.");
+      console.log("Reset Link:", data.resetLink);
     }
-  };
+  } catch (err) {
+    setErrors({ general: "Server error" });
+  }
+};
+
 
   return (
     <main className="container mx-auto mt-10 mb-20 px-4 md:px-10">

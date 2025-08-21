@@ -30,6 +30,8 @@ const userSchema = new mongoose.Schema({
   profilePic: {
     type: String, // optional (Google profile image URL)
   },
+  resetToken: String,
+  resetTokenExpiry: Date,
 }, { timestamps: true });
 
 export const User = mongoose.model("User", userSchema);
