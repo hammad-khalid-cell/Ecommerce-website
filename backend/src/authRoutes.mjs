@@ -12,7 +12,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login", // if login fails
+    failureRedirect: "http://localhost:5173/login", 
   }),
   (req, res) => {
     // Successful login

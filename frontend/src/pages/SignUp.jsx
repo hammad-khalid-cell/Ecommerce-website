@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import sideImage from "../assets/images/login/sideImage.png";
 import googleIcon from "../assets/images/login/Icon-Google.png";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -44,9 +45,9 @@ const SignUp = () => {
           });
           setErrors(newErrors);
         } else if (data.error) {
-    setErrors({ general: data.error });
-         console.log(data.error);
-         console.log(errors);
+          setErrors({ general: data.error });
+          console.log(data.error);
+          console.log(errors);
         }
         return;
       }
@@ -70,10 +71,10 @@ const SignUp = () => {
 
         {/* Sign-up Form Section */}
         <div className="w-1/3 md:w-2/5 bg-white p-8 rounded-lg ">
-          <h2 className="text-3xl font-bold text-center mb-2">
+          <h2 className="text-3xl font-bold   mb-2">
             Create an account
           </h2>
-          <p className="text-sm text-gray-500 text-center mb-6">
+          <p className="text-sm text-gray-500  mb-8">
             Enter your details below
           </p>
 
@@ -84,7 +85,7 @@ const SignUp = () => {
               name="username"
               type="text"
               placeholder="Name"
-              className="w-full p-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.username && (
               <p className="text-red-500 text-sm mt-1">{errors.username}</p>
@@ -95,7 +96,7 @@ const SignUp = () => {
               name="email"
               type="email"
               placeholder="Email or Phone Number"
-              className="w-full p-3 border-b border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-3 border-b border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -106,15 +107,14 @@ const SignUp = () => {
               name="password"
               type="password"
               placeholder="Password"
-              className="w-full p-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-3 border-b border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             )}
-             {errors.general && (
+            {errors.general && (
               <p className="text-red-500 text-sm mt-1">{errors.general}</p>
             )}
-
 
             <button
               type="submit"
@@ -135,12 +135,12 @@ const SignUp = () => {
           <div className="text-center mt-4">
             <p className="text-sm text-gray-500 mt-8">
               Already have account?{" "}
-              <a
-                href="#"
+              <Link
                 className="hover:text-red-500 font-semibold hover:underline ease-in-out "
+                to="/login"
               >
                 Log in
-              </a>
+              </Link>
             </p>
           </div>
         </div>
