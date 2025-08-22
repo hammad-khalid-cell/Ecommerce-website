@@ -21,7 +21,7 @@ const SignUp = () => {
   };
 
  const googleAuth = () => {
-  window.open("http://localhost:3000/auth/google", "_self");
+  window.open("http://localhost:3000/api/auth/google", "_self");
 };
 
   const handleSubmit = async (e) => {
@@ -30,7 +30,9 @@ const SignUp = () => {
     try {
       console.log("this is the frontend data", formData);
 
-      const res = await fetch("/api/users", {
+            // new backend url  =  /api/auth/users    /api/users
+
+      const res = await fetch("/api/auth/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

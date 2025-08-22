@@ -1,12 +1,14 @@
-
+import express from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../models/mongoose/schema/users.mjs"; 
-import { hashPassword } from "../utils/helper.mjs";
 
+import { User } from "../models/User.mjs";
+import { hashPassword } from "../utils/hashPassword.mjs";
 
-const JWT_SECRET = "cdkjv3459cbkd9"; 
+const router = express.Router();
+const JWT_SECRET = "cdkjv3459cbkd9";
 
-router.post("/api/auth/reset-password", async (req, res) => {
+// Step 1 → Request reset link
+router.post("/reset-password", async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -18,7 +20,6 @@ router.post("/api/auth/reset-password", async (req, res) => {
     user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    // frontend route for entering new password
     const resetLink = `http://localhost:5173/reset-password/${token}`;
     res.json({ message: "Password reset link generated", resetLink });
   } catch (err) {
@@ -26,8 +27,8 @@ router.post("/api/auth/reset-password", async (req, res) => {
   }
 });
 
-// reset password
-router.post("/api/auth/reset-password/:token", async (req, res) => {
+// Step 2 → Reset password with token
+router.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { newPassword } = req.body;
 
@@ -51,3 +52,5 @@ router.post("/api/auth/reset-password/:token", async (req, res) => {
     res.status(400).json({ error: "Invalid or expired token" });
   }
 });
+
+export default router;

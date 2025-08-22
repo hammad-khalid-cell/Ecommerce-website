@@ -33,8 +33,8 @@ const Login = () => {
     try {
       console.log("this is the frontend data", formData);
 
-      // This is a placeholder for your API call.
-      const res = await fetch("/api/users/login", {
+      // new backend url  =  /api/auth/users/login   /api/users/login
+      const res = await fetch("/api/auth/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
