@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
-import { User } from "../models/User.mjs";
+import { User } from "../models/user.mjs";
 import { hashPassword } from "../utils/hashPassword.mjs";
 import { comparePassword } from "../utils/comparePassword.mjs";
 
