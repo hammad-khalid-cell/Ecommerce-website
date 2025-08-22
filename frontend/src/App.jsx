@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage"
 import Login from "./pages/Login"
 import ResetPassword from "./pages/ResetPassword"
 import ForgotPassword from "./pages/ForgetPassword"
+import AdminPanel from "./pages/AdminPanel"
 
 
 function App() {
@@ -18,8 +19,8 @@ function App() {
           <Route path="/Login" element={<Login/>}/>
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/ForgetPassword" element={<ForgotPassword />} />
-
         </Route>
+          <Route path = "/AdminPanel" element= {<AdminPanel/>} />
       </Routes>
     </Router>
    

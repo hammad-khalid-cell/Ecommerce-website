@@ -31,7 +31,7 @@ const Login = () => {
 
 
   const googleAuth = () => {
-    window.open("http://localhost:3000/auth/google", "_self");
+    window.open("http://localhost:3000/api/auth/google", "_self");
   };
 
   const handleSubmit = async (e) => {
