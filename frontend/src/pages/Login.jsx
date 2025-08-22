@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { generatePath, Link, useNavigate } from "react-router-dom"; // Use Link for navigation
 import sideImage from "../assets/images/login/sideImage.png";
 import googleIcon from "../assets/images/login/Icon-Google.png";
+import facebookIcon from "../assets/images/login/facebook-icon.png"
+
 
 // Note: Local image imports are replaced with placeholder URLs to make the code runnable.
 // import sideImage from "../assets/images/login/sideImage.png";
@@ -22,6 +24,11 @@ const Login = () => {
       [e.target.name]: e.target.value,
     });
   };
+  
+  const facebookAuth = ()=>{
+    window.open("http://localhost:3000/api/auth/facebook", "_self")
+  }
+
 
   const googleAuth = () => {
     window.open("http://localhost:3000/auth/google", "_self");
@@ -123,6 +130,18 @@ const Login = () => {
               >
                 <img src={googleIcon} alt="" />
                 <span>Continue with Google</span>
+              </button>
+              <button
+                onClick={facebookAuth}
+                type="button"
+                className="w-full flex items-center justify-center space-x-2 bg-white text-gray-700 font-semibold py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors duration-200"
+              >
+                <img
+                  src={facebookIcon}
+                  alt="facebook-icon"
+                  className="w-[32px]"
+                />
+                <span>login with Facebook</span>
               </button>
               <button
                 type="submit"

@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as FacebookStrategy } from "passport-facebook";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { User } from "../models/user.mjs";
@@ -15,7 +16,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -37,6 +38,41 @@ passport.use(
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         // 4️⃣ Attach token + user to req.user
+        return done(null, { user, token });
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+      profileFields: ['id', 'displayName', 'photos', 'email']
+      
+
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ facebookId: profile.id });
+
+        if (!user) {
+          user = new User({
+            facebookId: profile.id,
+            username: profile.displayName,
+            email: profile.emails[0].value,
+          });
+          await user.save();
+        }
+
+
+        const payload = { id: user._id, email: user.email };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+
         return done(null, { user, token });
       } catch (err) {
         return done(err, null);

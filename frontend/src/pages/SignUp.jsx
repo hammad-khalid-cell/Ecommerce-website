@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import sideImage from "../assets/images/login/sideImage.png";
 import googleIcon from "../assets/images/login/Icon-Google.png";
+import facebookIcon from "../assets/images/login/facebook-icon.png"
 import { Link } from "react-router-dom";
 
 const SignUp = () => {
@@ -19,6 +20,10 @@ const SignUp = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const facebookAuth = ()=>{
+    window.open("http://localhost:3000/api/auth/facebook", "_self")
+  }
 
  const googleAuth = () => {
   window.open("http://localhost:3000/api/auth/google", "_self");
@@ -135,8 +140,17 @@ const SignUp = () => {
               type="button"
               className="w-full flex items-center justify-center space-x-2 bg-white text-gray-700 font-semibold py-3 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors duration-200"
             >
-              <img src={googleIcon} alt="" />
+              <img src={googleIcon} alt="google-icon" />
               <span>Sign up with Google</span>
+            </button>
+
+             <button
+             onClick={facebookAuth}
+              type="button"
+              className="w-full flex items-center justify-center space-x-2 bg-white text-gray-700 font-semibold py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors duration-200"
+            >
+              <img src={facebookIcon} alt="facebook-icon" className="w-[32px]" />
+              <span>Sign up with Facebook</span>
             </button>
           </form>
 

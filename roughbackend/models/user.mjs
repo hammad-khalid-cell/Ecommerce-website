@@ -19,8 +19,12 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: function () {
-      return !this.googleId; // required only if not using Google
+      return (!this.googleId  ); 
     },
+     required: function () {
+      return ( !this.facebookId); 
+    },
+   
   },
   googleId: {
     type: String, // only for Google OAuth users
@@ -30,6 +34,12 @@ const userSchema = new mongoose.Schema({
   profilePic: {
     type: String, // optional (Google profile image URL)
   },
+  facebookId:{
+     type: String, // only for Google OAuth users
+    unique: true,
+    sparse: true, 
+  },
+  
   resetToken: String,
   resetTokenExpiry: Date,
 }, { timestamps: true });
