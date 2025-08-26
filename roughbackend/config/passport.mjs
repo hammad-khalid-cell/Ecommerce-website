@@ -22,6 +22,8 @@ passport.use(
       try {
         // 1️⃣ Check if user already exists in DB
         let user = await User.findOne({ googleId: profile.id });
+        
+        
 
         if (!user) {
           // 2️⃣ Create new user if not found
@@ -29,6 +31,7 @@ passport.use(
             googleId: profile.id,
             username: profile.displayName,
             email: profile.emails[0].value,
+            profilePic : profile.photos[0].value,
           });
           await user.save();
         }

@@ -3,8 +3,15 @@ import { validationResult } from "express-validator";
 import { User } from "../models/user.mjs";
 import { hashPassword } from "../utils/hashPassword.mjs";
 import { comparePassword } from "../utils/comparePassword.mjs";
+import dotenv from "dotenv"
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+
+dotenv.config();
+
+
+const JWT_SECRET = process.env.JWT_SECRET;
+console.log("JWT_SECRET value:", process.env.JWT_SECRET);
+
 
 // 🔑 Register new user
 export const registerUser = async (req, res) => {
@@ -54,9 +61,10 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
-
+  
     // ✅ Generate JWT
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -80,7 +88,9 @@ export const loginUser = async (req, res) => {
 
 // 🔑 Google OAuth callback
 export const googleCallback = (req, res) => {
-  const token = jwt.sign({ id: req.user._id }, JWT_SECRET, { expiresIn: "1h" });
+
+const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
 
   res.cookie("token", token, {
     httpOnly: true,
@@ -93,7 +103,7 @@ export const googleCallback = (req, res) => {
 
 
 export const facebookCallback = (req, res) => {
-  const token = jwt.sign({ id: req.user._id }, JWT_SECRET, { expiresIn: "1h" });
+const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
   res.cookie("token", token, {
     httpOnly: true,

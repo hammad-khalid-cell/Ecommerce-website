@@ -5,7 +5,9 @@ import { User } from "../models/user.mjs";
 import { hashPassword } from "../utils/hashPassword.mjs";
 
 const router = express.Router();
-const JWT_SECRET = "cdkjv3459cbkd9";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 // Step 1 → Request reset link
 router.post("/reset-password", async (req, res) => {
@@ -14,7 +16,7 @@ router.post("/reset-password", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "15m" });
+    const token = jwt.sign({ id: user._id },  process.env.JWT_SECRET, { expiresIn: "15m" });
 
     user.resetToken = token;
     user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;
@@ -33,7 +35,7 @@ router.post("/reset-password/:token", async (req, res) => {
   const { newPassword } = req.body;
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).json({ error: "User not found" });
 

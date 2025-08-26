@@ -9,6 +9,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.mjs";
 import authRoutes from "./routes/authRoutes.mjs";
 import passwordRoutes from "./routes/passwordRoutes.mjs";
+import userRoutes from  "./routes/userRoutes.mjs"
+
 
 // Load env vars
 dotenv.config();
@@ -25,11 +27,13 @@ app.use(
 
 
 app.use(express.json());
+app.use(cookieParser()); 
 app.use(passport.initialize());
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", passwordRoutes); 
+app.use("/api/user", userRoutes)
 
 app.get("/", (req, res) => res.send("Server is running 🚀"));
 

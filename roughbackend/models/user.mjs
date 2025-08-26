@@ -29,7 +29,8 @@ const userSchema = new mongoose.Schema({
     sparse: true, // prevents conflicts with normal users
   },
   profilePic: {
-    type: String, // optional (Google profile image URL)
+    type: String, 
+    
   },
   facebookId:{
      type: String, // only for Google OAuth users
