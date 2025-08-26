@@ -17,15 +17,12 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   password: {
-    type: String,
-    required: function () {
-      return (!this.googleId  ); 
+      type: String,
+      required: function () {
+        return !this.googleId && !this.facebookId; 
+        
+      },
     },
-     required: function () {
-      return ( !this.facebookId); 
-    },
-   
-  },
   googleId: {
     type: String, // only for Google OAuth users
     unique: true,
@@ -39,6 +36,11 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true, 
   },
+    role: {
+      type: String,
+      enum: ["customer", "admin"], // only these values allowed
+      default: "customer", // by default everyone is a normal user
+    },
   
   resetToken: String,
   resetTokenExpiry: Date,

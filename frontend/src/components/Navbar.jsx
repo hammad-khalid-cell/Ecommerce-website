@@ -82,6 +82,9 @@ const Navbar = () => {
             </div>
             {isProfileModalOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-10">
+                <Link to="/AdminPanel" className=" px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center space-x-2" >
+                Manage My Account
+                </Link>
                 <a
                   href="#"
                   className=" px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center space-x-2"
