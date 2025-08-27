@@ -1,6 +1,11 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import Dashboard from '../components/Dashboard';
+import CategoriesSection from '../components/categorySection';
+import ProductsSection from '../components/ProductSection';
+import Settings from '../components/settings';
+
+
 
 const mockCategories = [
   { id: '1', name: 'Electronics', description: 'Gadgets and gizmos', created: '2023-01-15' },
