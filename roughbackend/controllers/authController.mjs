@@ -61,10 +61,10 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
-  
+
     // ✅ Generate JWT
-const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
-  
+    const token = jwt.sign({ id: user._id.toString(), role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -77,6 +77,7 @@ const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { ex
       user: {
         id: user._id,
         username: user.username,
+        role :  user.role,
         email: user.email,
       },
     });
@@ -88,22 +89,44 @@ const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { ex
 
 // 🔑 Google OAuth callback
 export const googleCallback = (req, res) => {
+  try {
+    const googeleUser = req.user; 
 
-const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    if (!googeleUser) {
+      return res.status(400).json({ error: "No user returned from Google OAuth" });
+    }
 
+    const token = jwt.sign(
+      { id: googeleUser._id.toString(), role: googeleUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // true in production with HTTPS
+      sameSite: "lax",
+    });
 
-  res.redirect("http://localhost:5173/");
+    res.redirect("http://localhost:5173/");
+  } catch (err) {
+    console.error("Google callback error:", err);
+    res.status(500).json({ error: "OAuth login failed" });
+  }
 };
 
 
+
 export const facebookCallback = (req, res) => {
-const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  if (!req.user) {
+    return res.status(401).json({ error: "Facebook authentication failed" });
+  }
+
+  const token = jwt.sign(
+    { id: req.user._id.toString(), role: req.user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 
   res.cookie("token", token, {
     httpOnly: true,

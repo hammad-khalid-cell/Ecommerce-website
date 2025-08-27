@@ -37,11 +37,11 @@ passport.use(
         }
 
         // 3️⃣ Generate JWT
-        const payload = { id: user._id, email: user.email };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const payload = { id: user._id, email: user.email , role : user.role};
+        // const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         // 4️⃣ Attach token + user to req.user
-        return done(null, { user, token });
+        return done(null, user);
       } catch (err) {
         return done(err, null);
       }
@@ -73,10 +73,10 @@ passport.use(
         }
 
 
-        const payload = { id: user._id, email: user.email };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const payload = { id: user._id, email: user.email ,role: user.role};
+        // const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        return done(null, { user, token });
+        return done(null, user);
       } catch (err) {
         return done(err, null);
       }

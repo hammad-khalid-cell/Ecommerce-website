@@ -10,6 +10,7 @@ import connectDB from "./config/db.mjs";
 import authRoutes from "./routes/authRoutes.mjs";
 import passwordRoutes from "./routes/passwordRoutes.mjs";
 import userRoutes from  "./routes/userRoutes.mjs"
+import productRoutes from "./routes/productRoutes.mjs"
 
 
 // Load env vars
@@ -33,7 +34,8 @@ app.use(passport.initialize());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", passwordRoutes); 
-app.use("/api/user", userRoutes)
+app.use("/api/user", userRoutes);
+app.use("/api/products", productRoutes)
 
 app.get("/", (req, res) => res.send("Server is running 🚀"));
 

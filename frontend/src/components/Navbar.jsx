@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { User, ShoppingBag, Heart, Search, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { clearUser } from "../redux/slices/user/userSlice";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
@@ -19,7 +21,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm font-inter">
+    <nav className="bg-white  font-inter border-b-1 border-gray-200">
       <div className="container mx-auto px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
         {/* Logo/Brand */}
         <div className="text-2xl font-bold font-sans tracking-wide mb-4 md:mb-0">
@@ -28,17 +30,29 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <div className="flex space-x-8 text-lg font-medium">
-          <Link to="/" className="hover:text-gray-900 border-b-2 border-black pb-1 transition-colors duration-200">
+          <Link
+            to="/"
+            className="hover:text-gray-900 border-b-2 border-black pb-1 transition-colors duration-200"
+          >
             Home
           </Link>
-          <Link to="/contact" className="hover:text-gray-900 transition-colors duration-200">
+          <Link
+            to="/contact"
+            className="hover:text-gray-900 transition-colors duration-200"
+          >
             Contact
           </Link>
-          <Link to="/about" className="hover:text-gray-900 transition-colors duration-200">
+          <Link
+            to="/about"
+            className="hover:text-gray-900 transition-colors duration-200"
+          >
             About
           </Link>
           {!user && (
-            <Link to="/signup" className="hover:text-gray-900 transition-colors duration-200">
+            <Link
+              to="/signup"
+              className="hover:text-gray-900 transition-colors duration-200"
+            >
               SignUp
             </Link>
           )}
@@ -59,8 +73,14 @@ const Navbar = () => {
           </div>
 
           {/* Icons */}
-          <Heart size={24} className="text-gray-700 cursor-pointer hover:text-red-500 transition-colors duration-200" />
-          <ShoppingBag size={24} className="text-gray-700 cursor-pointer hover:text-black transition-colors duration-200" />
+          <Heart
+            size={24}
+            className="text-gray-700 cursor-pointer hover:text-red-500 transition-colors duration-200"
+          />
+          <ShoppingBag
+            size={24}
+            className="text-gray-700 cursor-pointer hover:text-black transition-colors duration-200"
+          />
 
           {/* Profile Dropdown */}
           <div className="relative">
@@ -87,7 +107,7 @@ const Navbar = () => {
 
             {/* Dropdown Menu */}
             {isProfileModalOpen && (
-              <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-xl py-2 z-10">
+              <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-xl py-2 z-[9999]">
                 {user ? (
                   <>
                     <Link
@@ -131,6 +151,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     to="/login"
+                    onClick={() => setIsProfileModalOpen(false)}
                     className="px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center space-x-2"
                   >
                     <User size={16} />

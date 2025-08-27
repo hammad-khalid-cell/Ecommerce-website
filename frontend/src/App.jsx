@@ -12,8 +12,8 @@ import { setUser, clearUser } from "./redux/slices/user/userSlice";
 
 function App() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    const fetchUser = async () => {
+
+  const fetchUser = async () => {
       try {
         const res = await fetch("http://localhost:3000/api/user/me", {
           method: "GET",
@@ -24,13 +24,20 @@ function App() {
 
         const data = await res.json();
         dispatch(setUser(data));
+        console.log("this is the user data",data);
+        
       } catch (err) {
         dispatch(clearUser());
       }
     };
+  
+  useEffect(() => {
+    
     fetchUser();
   }, [dispatch]);
 
+  
+   
   return (
     <Router>
       <Routes>
@@ -41,7 +48,11 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/ForgetPassword" element={<ForgotPassword />} />
         </Route>
-        <Route path="/AdminPanel" element={<AdminPanel />} />
+        
+        
+           <Route path="/AdminPanel" element={<AdminPanel />} />
+       
+        
       </Routes>
     </Router>
   );

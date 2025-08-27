@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { generatePath, Link, useNavigate } from "react-router-dom"; // Use Link for navigation
 import sideImage from "../assets/images/login/sideImage.png";
 import googleIcon from "../assets/images/login/Icon-Google.png";
-import facebookIcon from "../assets/images/login/facebook-icon.png"
-
+import facebookIcon from "../assets/images/login/facebook-icon.png";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/user/userSlice";
 
 // Note: Local image imports are replaced with placeholder URLs to make the code runnable.
 // import sideImage from "../assets/images/login/sideImage.png";
@@ -14,6 +15,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const dispatch  =  useDispatch();
   const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
@@ -24,11 +26,10 @@ const Login = () => {
       [e.target.name]: e.target.value,
     });
   };
-  
-  const facebookAuth = ()=>{
-    window.open("http://localhost:3000/api/auth/facebook", "_self")
-  }
 
+  const facebookAuth = () => {
+    window.open("http://localhost:3000/api/auth/facebook", "_self");
+  };
 
   const googleAuth = () => {
     window.open("http://localhost:3000/api/auth/google", "_self");
@@ -61,8 +62,13 @@ const Login = () => {
         } else if (data.error) {
           setErrors({ general: data.error });
         } else {
+          
           console.log("User logged in:", data);
+          
+        
+          dispatch(setUser(data.user));
           navigate("/");
+
         }
         return;
       }

@@ -16,7 +16,7 @@ router.post("/reset-password", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    const token = jwt.sign({ id: user._id },  process.env.JWT_SECRET, { expiresIn: "15m" });
+    const token = jwt.sign({ id: user._id , role:user.role},  process.env.JWT_SECRET, { expiresIn: "15m" });
 
     user.resetToken = token;
     user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;

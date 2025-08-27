@@ -11,13 +11,8 @@ dotenv.config();
 
 router.get("/me", authMiddleware, async (request, response) => {
   try {
-    console.log("this is the user id :",request.user.id);
-    
     const user = await User.findById(request.user.id).select("username email role profilePic");
-    console.log("this is the user ",user);
-    
     if (!user) return response.status(404).json({ error: "User not found" });
-
     response.json(user);
   } catch (err) {
     console.error("Error in /me:", err);
