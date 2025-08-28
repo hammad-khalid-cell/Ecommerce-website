@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 
+
 export default function ProductForm({ onSave, initialData, categories, onCancel }) {
-  const [formData, setFormData] = useState(initialData || { name: '', categoryId: '', price: '', description: '', imageUrl: '', stock: '', status: 'Active' });
+    
+
+  const [formData, setFormData] = useState(initialData || { name: '', category: '', price: '', description: '', images: '', stock: '', status: 'Active' });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -34,7 +37,7 @@ export default function ProductForm({ onSave, initialData, categories, onCancel 
         <div>
           <label className="block text-gray-700">Category</label>
           <select
-            name="categoryId"
+            name="category"
             value={formData.categoryId}
             onChange={handleChange}
             required
@@ -42,7 +45,7 @@ export default function ProductForm({ onSave, initialData, categories, onCancel 
           >
             <option value="">Select a category</option>
             {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
             ))}
           </select>
         </div>
@@ -70,7 +73,7 @@ export default function ProductForm({ onSave, initialData, categories, onCancel 
           <label className="block text-gray-700">Image URL</label>
           <input 
             type="text" 
-            name="imageUrl"
+            name="images"
             value={formData.imageUrl}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"

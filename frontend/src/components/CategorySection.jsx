@@ -36,7 +36,7 @@ export default function CategoriesSection({ categories, isAdding, setIsAdding, e
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {categories.map(cat => (
-                <tr key={cat.id} className="hover:bg-gray-50">
+                <tr key={cat._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">{cat.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{cat.description}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{cat.created}</td>
@@ -48,7 +48,7 @@ export default function CategoriesSection({ categories, isAdding, setIsAdding, e
                       Edit
                     </button>
                     <button 
-                      onClick={() => onDelete(cat.id)} 
+                      onClick={() => onDelete(cat._id)} 
                       className="text-red-600 hover:text-red-900"
                     >
                       Delete

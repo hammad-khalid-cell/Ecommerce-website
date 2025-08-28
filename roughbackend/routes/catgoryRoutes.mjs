@@ -78,6 +78,7 @@ router.delete("/:id", authMiddleware, authorizeRoles("admin"), async (req, res) 
 router.get("/get", async (req, res) => {
   try {
     const category = await Category.find(); // fetch all category
+    
     res.json(category);
   } catch (err) {
     console.error("Error fetching category:", err.message);

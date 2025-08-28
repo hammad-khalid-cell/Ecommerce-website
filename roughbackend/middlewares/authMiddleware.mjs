@@ -10,14 +10,11 @@ export const authMiddleware = (req, res, next) => {
   console.log("this is the token", token);
 
   if (!token) {
-    
     return res.status(401).json({ error: "Unauthorized" });
   }
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("this is the decoded value",decoded);
-    console.log("this is the token in the try block", token);
     req.user = decoded;
     next();
   } catch (err) {

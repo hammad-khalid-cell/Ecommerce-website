@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
+
 export default function CategoryForm({ onSave, initialData, onCancel }) {
+
+
   const [formData, setFormData] = useState(initialData || { name: '', description: '', image: '' });
 
   const handleChange = (e) => {

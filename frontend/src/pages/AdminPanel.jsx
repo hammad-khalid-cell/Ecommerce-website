@@ -4,56 +4,77 @@ import Dashboard from '../components/Dashboard';
 import CategoriesSection from '../components/categorySection';
 import ProductsSection from '../components/ProductSection';
 import Settings from '../components/settings';
-import { useGetProductsQuery}  from "../redux/api/products.js"
-
-
-
-
-
-
-const mockCategories = [
-  { id: '1', name: 'Electronics', description: 'Gadgets and gizmos', created: '2023-01-15' },
-  { id: '2', name: 'Apparel', description: 'Clothing and accessories', created: '2023-02-20' },
-  { id: '3', name: 'Home Goods', description: 'Furniture and decor', created: '2023-03-10' },
-];
-
-const mockProducts = [
-  { id: 'p1', name: 'Laptop', categoryId: '1', categoryName: 'Electronics', price: 1200, stock: 50, status: 'Active' },
-  { id: 'p2', name: 'T-Shirt', categoryId: '2', categoryName: 'Apparel', price: 25, stock: 200, status: 'Active' },
-  { id: 'p3', name: 'Desk Lamp', categoryId: '3', categoryName: 'Home Goods', price: 45, stock: 75, status: 'Inactive' },
-];
-
-// const getProducts = async ()=>{
-//   try{
-//     const res = await  fetch("http://localhost:3000/api/user/me", {
-//       method: "GET",
-//     });
-//     if(!res.ok){
-//       throw new Error("Response failed");
-
-//     }
-//     const data=  await res.json();
-
-//   }
-// }
+import { useGetProductsQuery, useCreateProductsMutation, useDeleteProductsMutation,useEditProductsMutation}  from "../redux/api/products.js"
+import {useGetCategoryQuery} from "../redux/api/category"
 
 const AdminPanel = () => {
-
-
-
-  const {data, error , isLoading} =  useGetProductsQuery();
-  console.log("this is the data coming frmo backend products",data);
-    
+  
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
-  const [categories, setCategories] = useState(mockCategories);
-  const [products, setProducts] = useState(mockProducts);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  
+  const { data:productsData, error : getProductsError , isLoading: getProductsIsLoading} =  useGetProductsQuery();
+  const [addProduct, {error: create, isLoading : createLoading}] =  useCreateProductsMutation();
+  const {data:categoryData, error : getCategoriesError, isLoading :getCategoryIsLoading} =  useGetCategoryQuery();
+  
+const [editProduct] = useEditProductsMutation();
+const [deleteProduct, ] = useDeleteProductsMutation();
 
+// Edit Product
 
+const handleEditProduct = async (updatedProduct) => {
+  try {
+    const res = await editProduct({
+      id: updatedProduct._id,   // pass id separately
+      ...updatedProduct,        // spread other fields
+    }).unwrap();
+
+    // update local state
+    setProducts((products) =>
+      products.map((prod) => (prod._id === res._id ? res : prod))
+    );
+
+    setEditingProduct(null);
+    console.log("Product updated successfully:", res);
+  } catch (err) {
+    console.error("Error updating product:", err);
+  }
+};
+// Delete Product
+const handleDeleteProduct = async (id) => {
+  console.log("This is the id to delete", id);
+  
+  try {
+    await deleteProduct(id).unwrap(); // call backend delete
+    // Update local state
+    setProducts((products) => products.filter((prod) => prod._id !== id));
+    console.log("Product deleted successfully");
+  } catch (err) {
+    console.error("Error deleting :", err);
+  }
+};
+
+  
+  
+  useEffect(() => {
+    if (productsData && Array.isArray(productsData)) {
+      setProducts(productsData);
+    }
+  }, [productsData]);
+
+  useEffect(() => {
+    if (categoryData && Array.isArray(categoryData)) {
+      setCategories(categoryData);
+    }
+  }, [categoryData]);
+
+  
+  
   useEffect(() => {
     // In a real app, this would be a more robust token/role check
     const checkAuth = () => {
@@ -78,31 +99,27 @@ const AdminPanel = () => {
     setProducts(products.filter(prod => prod.categoryId !== id));
   };
 
+
+
   // --- Product Handlers ---
-  const handleAddProduct = (newProduct) => {
-    const category = categories.find(cat => cat.id === newProduct.categoryId);
-    const newProductWithDetails = {
-      ...newProduct,
-      id: Date.now().toString(),
-      categoryName: category ? category.name : 'Unknown',
-    };
-    setProducts([...products, newProductWithDetails]);
+const handleAddProduct = async (newProduct) => {
+  try {
+    // Call RTK Query mutation
+    const res = await addProduct(newProduct).unwrap(); 
+    console.log(res);
+    
+
+    // Optional: If your backend returns the saved product
+    setProducts((products) => [...products, res]);
     setIsAddingProduct(false);
-  };
-
-  const handleEditProduct = (updatedProduct) => {
-    const category = categories.find(cat => cat.id === updatedProduct.categoryId);
-    const updatedProductWithDetails = {
-      ...updatedProduct,
-      categoryName: category ? category.name : 'Unknown',
-    };
-    setProducts(products.map(prod => prod.id === updatedProduct.id ? updatedProductWithDetails : prod));
     setEditingProduct(null);
-  };
+    console.log("Product added successfully:", res);
+  } catch (err) {
+    console.error(" Error adding product:", err);
+  }
+};
 
-  const handleDeleteProduct = (id) => {
-    setProducts(products.filter(prod => prod.id !== id));
-  };
+
 
   if (!isAdmin) {
     return (

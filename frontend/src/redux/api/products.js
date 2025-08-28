@@ -1,7 +1,7 @@
 import { apiSlice } from "./apiSlice"
 import { PRODUCT_URL } from "../constants"
 
-export const userApiSlice = apiSlice.injectEndpoints({
+export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
       query: () => ({
@@ -17,19 +17,21 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     editProducts: builder.mutation({
-      query: (data) => ({
-        url: `${PRODUCT_URL}/edit`,
+      query: ({ id, ...data }) => ({
+        url: `${PRODUCT_URL}/${id}`,  
         method: "PUT",
-        body: data,
+        body: data,                   
       }),
     }),
+
     deleteProducts: builder.mutation({
-      query: (data) => ({
-        url: `${PRODUCT_URL}/delete`,
+      query: (id) => ({
+        url: `${PRODUCT_URL}/${id}`,  
         method: "DELETE",
-        body: data,
       }),
     }),
+
+
     getProductById: builder.query({
       query: (id) => ({
         url: `${PRODUCT_URL}/get/${id}`,
@@ -45,4 +47,4 @@ export const {
   useEditProductsMutation,
   useDeleteProductsMutation,
   useGetProductByIdQuery,
-} = userApiSlice
+} = productsApiSlice

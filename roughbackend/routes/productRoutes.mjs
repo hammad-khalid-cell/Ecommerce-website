@@ -13,11 +13,14 @@ router.post("/create", authMiddleware, authorizeRoles("admin"), async (req, res)
     return res.status(400).json({ errors: errors.array() });
   }
 
+
   try {
     const { name, description, price, stock, category, images, status } = req.body;
+    console.log(req.body);
+    
 
     if (!name || !description || !price || !stock || !category || !images || !status) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ error: "All fields are required" , });
     }
 
     const existingProduct = await Product.findOne({ name });
@@ -57,6 +60,9 @@ router.put("/:id", authMiddleware, authorizeRoles("admin"), async (req, res) => 
 
 // --- DELETE PRODUCT (Admin only) ---
 router.delete("/:id", authMiddleware, authorizeRoles("admin"), async (req, res) => {
+  console.log("this is the id ",(req.params.id));
+  
+  
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 
@@ -72,17 +78,18 @@ router.delete("/:id", authMiddleware, authorizeRoles("admin"), async (req, res) 
 });
 
 // --- GET ALL PRODUCTS (Public) ---
-
-
 router.get("/get", async (req, res) => {
   try {
-    const products = await Product.find(); // fetch all products
+    const products = await Product.find()
+      .populate("category", "name"); // match the schema field "category"
+
     res.json(products);
   } catch (err) {
     console.error("Error fetching products:", err.message);
     res.status(500).json({ error: "Failed to fetch products" });
   }
 });
+
 
 // --- GET SINGLE PRODUCT (Public) ---
 router.get("/:id", async (req, res) => {
