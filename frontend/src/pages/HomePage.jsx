@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+
+
 // Main HomePage component
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  
 
   const slides = [
     {

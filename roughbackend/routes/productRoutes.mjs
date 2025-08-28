@@ -7,7 +7,7 @@ import { validationResult } from "express-validator";
 const router = express.Router();
 
 // --- CREATE PRODUCT (Admin only) ---
-router.post("/", authMiddleware, authorizeRoles("admin"), async (req, res) => {
+router.post("/create", authMiddleware, authorizeRoles("admin"), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -28,7 +28,7 @@ router.post("/", authMiddleware, authorizeRoles("admin"), async (req, res) => {
     const newProduct = new Product({ name, description, price, stock, category, images, status });
     const savedProduct = await newProduct.save();
 
-    res.status(201).json(savedProduct);
+    res.status(201).json(newProduct);
   } catch (err) {
     console.log("Error saving product", err);
     res.status(500).json({ error: "Failed to save product" });
@@ -72,27 +72,14 @@ router.delete("/:id", authMiddleware, authorizeRoles("admin"), async (req, res) 
 });
 
 // --- GET ALL PRODUCTS (Public) ---
-router.get("/", async (req, res) => {
+
+
+router.get("/get", async (req, res) => {
   try {
-    const { category, status, minPrice, maxPrice, search } = req.query;
-
-    let filters = {};
-    if (category) filters.category = category;
-    if (status) filters.status = status;
-    if (minPrice || maxPrice) {
-      filters.price = {};
-      if (minPrice) filters.price.$gte = Number(minPrice);
-      if (maxPrice) filters.price.$lte = Number(maxPrice);
-    }
-    if (search) {
-      filters.name = { $regex: search, $options: "i" };
-    }
-
-    const products = await Product.find(filters).populate("category", "name");
-
+    const products = await Product.find(); // fetch all products
     res.json(products);
   } catch (err) {
-    console.log("Error fetching products", err);
+    console.error("Error fetching products:", err.message);
     res.status(500).json({ error: "Failed to fetch products" });
   }
 });

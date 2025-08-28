@@ -4,6 +4,10 @@ import Dashboard from '../components/Dashboard';
 import CategoriesSection from '../components/categorySection';
 import ProductsSection from '../components/ProductSection';
 import Settings from '../components/settings';
+import { useGetProductsQuery}  from "../redux/api/products.js"
+
+
+
 
 
 
@@ -19,7 +23,26 @@ const mockProducts = [
   { id: 'p3', name: 'Desk Lamp', categoryId: '3', categoryName: 'Home Goods', price: 45, stock: 75, status: 'Inactive' },
 ];
 
+// const getProducts = async ()=>{
+//   try{
+//     const res = await  fetch("http://localhost:3000/api/user/me", {
+//       method: "GET",
+//     });
+//     if(!res.ok){
+//       throw new Error("Response failed");
+
+//     }
+//     const data=  await res.json();
+
+//   }
+// }
+
 const AdminPanel = () => {
+
+
+
+  const {data, error , isLoading} =  useGetProductsQuery();
+  console.log("this is the data coming frmo backend products",data);
     
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
@@ -29,6 +52,7 @@ const AdminPanel = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+
 
   useEffect(() => {
     // In a real app, this would be a more robust token/role check
