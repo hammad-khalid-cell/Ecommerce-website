@@ -5,6 +5,7 @@ export default function ProductForm({ onSave, initialData, categories, onCancel 
     
 
   const [formData, setFormData] = useState(initialData || { name: '', category: '', price: '', description: '', images: '', stock: '', status: 'Active' });
+  console.log(formData);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -38,7 +39,7 @@ export default function ProductForm({ onSave, initialData, categories, onCancel 
           <label className="block text-gray-700">Category</label>
           <select
             name="category"
-            value={formData.categoryId}
+            value={formData.category._id}
             onChange={handleChange}
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -74,7 +75,7 @@ export default function ProductForm({ onSave, initialData, categories, onCancel 
           <input 
             type="text" 
             name="images"
-            value={formData.imageUrl}
+            value={formData.images}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />

@@ -5,7 +5,7 @@ import CategoriesSection from '../components/categorySection';
 import ProductsSection from '../components/ProductSection';
 import Settings from '../components/settings';
 import { useGetProductsQuery, useCreateProductsMutation, useDeleteProductsMutation,useEditProductsMutation}  from "../redux/api/products.js"
-import {useGetCategoryQuery} from "../redux/api/category"
+import {useCreateCategoryMutation, useDeleteCategoryMutation, useEditCategoryMutation, useGetCategoryQuery} from "../redux/api/category"
 
 const AdminPanel = () => {
   
@@ -19,11 +19,16 @@ const AdminPanel = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   
   const { data:productsData, error : getProductsError , isLoading: getProductsIsLoading} =  useGetProductsQuery();
-  const [addProduct, {error: create, isLoading : createLoading}] =  useCreateProductsMutation();
   const {data:categoryData, error : getCategoriesError, isLoading :getCategoryIsLoading} =  useGetCategoryQuery();
-  
-const [editProduct] = useEditProductsMutation();
-const [deleteProduct, ] = useDeleteProductsMutation();
+
+  const [addProduct] =  useCreateProductsMutation();
+  const [addCategory] = useCreateCategoryMutation();
+
+  const [editProduct] = useEditProductsMutation();
+  const [editCategory] = useEditCategoryMutation();
+
+  const [deleteProduct, ] = useDeleteProductsMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
 // Edit Product
 
@@ -84,11 +89,7 @@ const handleDeleteProduct = async (id) => {
   }, []);
 
   // --- Category Handlers ---
-  const handleAddCategory = (newCategory) => {
-    setCategories([...categories, { ...newCategory, id: Date.now().toString(), created: new Date().toISOString().slice(0, 10) }]);
-    setIsAddingCategory(false);
-  };
-
+ 
   const handleEditCategory = (updatedCategory) => {
     setCategories(categories.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat));
     setEditingCategory(null);
@@ -99,17 +100,25 @@ const handleDeleteProduct = async (id) => {
     setProducts(products.filter(prod => prod.categoryId !== id));
   };
 
-
+   const handleAddCategory = async (newCategory) => {
+    try{
+      const res =  await addCategory(newCategory).unwrap();
+      console.log(res);
+      setCategories((categories)=> [...categories,res ]);
+      setIsAddingCategory(false);
+      setEditingCategory(null);
+      console.log("Category added successfully :" ,res );
+    }catch(err){
+      console.log("Error editing category frontend : ", err); 
+    }
+  };
 
   // --- Product Handlers ---
 const handleAddProduct = async (newProduct) => {
   try {
     // Call RTK Query mutation
     const res = await addProduct(newProduct).unwrap(); 
-    console.log(res);
     
-
-    // Optional: If your backend returns the saved product
     setProducts((products) => [...products, res]);
     setIsAddingProduct(false);
     setEditingProduct(null);

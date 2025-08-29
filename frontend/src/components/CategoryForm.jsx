@@ -7,7 +7,10 @@ export default function CategoryForm({ onSave, initialData, onCancel }) {
   const [formData, setFormData] = useState(initialData || { name: '', description: '', image: '' });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, 
+      [name]: type === 'checkbox' ? (checked ? 'Active' : 'Inactive') : value,
+    });
   };
 
   const handleSubmit = (e) => {
@@ -39,15 +42,15 @@ export default function CategoryForm({ onSave, initialData, onCancel }) {
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div>
-          <label className="block text-gray-700">Image URL (Optional)</label>
+         <div className="flex items-center space-x-2">
           <input 
-            type="text" 
-            name="image"
-            value={formData.image}
+            type="checkbox" 
+            name="status"
+            checked={formData.status === 'Active'}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
+          <label className="text-gray-700">Active</label>
         </div>
         <div className="flex space-x-4">
           <button 
