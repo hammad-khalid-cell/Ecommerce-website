@@ -20,6 +20,16 @@ router.get("/me", authMiddleware, async (request, response) => {
   }
 });
 
+router.get("/get", async(req, res)=>{
+  try{
+    const users = await User.find();
+    res.json(users)
+  }catch(err){
+    console.error("Error fetching users", err);
+    res.status(500).jsonn({error : "Failed to fetch users"})
+  }
+})
+
 
 
 export default router;

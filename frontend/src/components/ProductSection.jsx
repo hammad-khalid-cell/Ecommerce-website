@@ -11,7 +11,13 @@ export default function ProductsSection({
   onAdd,
   onEdit,
   onDelete,
-}) {
+})
+    
+    
+ {
+
+  console.log("These are the procuts ",products);
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
