@@ -26,7 +26,7 @@ router.get("/get", async(req, res)=>{
     res.json(users)
   }catch(err){
     console.error("Error fetching users", err);
-    res.status(500).jsonn({error : "Failed to fetch users"})
+    res.status(500).json({error : "Failed to fetch users"})
   }
 })
 

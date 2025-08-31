@@ -79,6 +79,8 @@ export const loginUser = async (req, res) => {
         username: user.username,
         role :  user.role,
         email: user.email,
+        profilePic:  user.profilePic,
+        
       },
     });
   } catch (err) {

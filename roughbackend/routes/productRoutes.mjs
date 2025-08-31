@@ -3,42 +3,125 @@ import { authMiddleware } from "../middlewares/authMiddleware.mjs";
 import { authorizeRoles } from "../middlewares/roleMiddleware.mjs";
 import { Product } from "../models/products.mjs";
 import { validationResult } from "express-validator";
+import multer from "multer";
+import {uploadToCloudinary} from "../utils/cloudinary.mjs"
 
 const router = express.Router();
 
-// --- CREATE PRODUCT (Admin only) ---
-router.post("/create", authMiddleware, authorizeRoles("admin"), async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+const storage = multer.memoryStorage();
+const upload  =  multer({storage});
+
+// router.post("/create", authMiddleware, authorizeRoles("admin"),upload.array("images", 5), async (req, res) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).json({ errors: errors.array() });
+//   }
 
 
-  try {
-    const { name, description, price, stock, category, images, status } = req.body;
-    console.log(req.body);
+//   try {
+//     const { name, description, price, stock, category, status } = req.body;
     
 
-    if (!name || !description || !price || !stock || !category || !images || !status) {
-      return res.status(400).json({ error: "All fields are required" , });
-    }
+//     console.log(req.body);
+    
 
-    const existingProduct = await Product.findOne({ name });
-    if (existingProduct) {
-      return res.status(400).json({ error: "Product already exists" });
-    }
+//     if (!name || !description || !price || !stock || !category || !req.files || !status) {
+//       return res.status(400).json({ error: "All fields are required" , });
+//     }
 
-    const newProduct = new Product({ name, description, price, stock, category, images, status });
-    const savedProduct = await newProduct.save();
 
-    res.status(201).json(newProduct);
-  } catch (err) {
-    console.log("Error saving product", err);
-    res.status(500).json({ error: "Failed to save product" });
-  }
-});
+    
+
+//     let uploadedImages = [];
+//     if (req.files && req.files.length > 0) {
+//       const uploadPromises = req.files.map((file) =>
+//         uploadToCloudinary(file.buffer, "products")
+//       );
+//       const results = await Promise.all(uploadPromises);
+//       uploadedImages = results.map((r) => r.secure_url);
+//     }
+
+
+//     const existingProduct = await Product.findOne({ name });
+//     if (existingProduct) {
+//       return res.status(400).json({ error: "Product already exists" });
+//     }
+
+//     const newProduct = new Product({ name, description, price, stock, category, images: uploadedImages, status });
+//     const savedProduct = await newProduct.save();
+
+//     res.status(201).json(newProduct);
+//   } catch (err) {
+//     console.log("Error saving product", err);
+//     res.status(500).json({ error: "Failed to save product" });
+//   }
+// });
 
 // --- UPDATE PRODUCT (Admin only) ---
+
+router.post(
+  "/create",
+  authMiddleware,
+  authorizeRoles("admin"),
+  upload.array("images", 5),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { name, description, price, stock, category, status } = req.body;
+
+      console.log("Req.body:", req.body);
+      console.log("Req.files:", req.files);
+
+      // ✅ Correct check (req.files instead of req.file)
+      if (!name || !description || !price || !stock || !category || !status || !req.files) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+
+      // ✅ Upload images to Cloudinary
+      let uploadedImages = [];
+      if (req.files.length > 0) {
+        const uploadPromises = req.files.map((file) =>
+          uploadToCloudinary(file.buffer, "products")
+        );
+        const results = await Promise.all(uploadPromises);
+        uploadedImages = results.map((r) => r.secure_url);
+      }
+
+      // ✅ Check if product already exists
+      const existingProduct = await Product.findOne({ name });
+      if (existingProduct) {
+        return res.status(400).json({ error: "Product already exists" });
+      }
+
+      // ✅ Cast numbers properly
+      const newProduct = new Product({
+        name,
+        description,
+        price: Number(price),
+        stock: Number(stock),
+        category,
+        images: uploadedImages,
+        status,
+      });
+
+      const savedProduct = await newProduct.save();
+      console.log("Uploaded images:", uploadedImages);
+
+
+      res.status(201).json(savedProduct); // ✅ return the saved product
+    } catch (err) {
+      console.error("Error saving product:", err);
+      res.status(500).json({ error: "Failed to save product" });
+    }
+  }
+);
+
+
+
 router.put("/:id", authMiddleware, authorizeRoles("admin"), async (req, res) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
