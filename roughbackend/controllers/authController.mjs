@@ -144,5 +144,5 @@ export const logoutUser = (req, res) => {
     secure: false,
     sameSite: "lax",
   });
-  res.redirect("http://localhost:5173/login");
+  res.status(200).json({message: "User logged out successfully"})
 };

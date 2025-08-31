@@ -50,7 +50,6 @@ const Login = () => {
       });
 
       const data = await res.json();
-      console.log("this is the data coming from the backend", data);
       if (res.ok) {
         if (data.errors) {
           const newErrors = {};

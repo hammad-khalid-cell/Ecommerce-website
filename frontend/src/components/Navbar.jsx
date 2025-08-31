@@ -4,21 +4,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { clearUser } from "../redux/slices/user/userSlice";
 import { useEffect } from "react";
+import { useGetUserLogoutMutation } from "../redux/api/auth";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+const [logoutUser, { data, isLoading, error }] = useGetUserLogoutMutation();
+  
 
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+  try {
+    await logoutUser().unwrap();   
     dispatch(clearUser());
-  };
+    
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
+};
+
 
   return (
     <nav className="bg-white  font-inter border-b-1 border-gray-200">

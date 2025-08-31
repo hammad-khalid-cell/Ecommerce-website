@@ -255,14 +255,14 @@ const AdminPanel = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800 capitalize">
+      <main className="flex-1 p-8 overflow-y-auto   ">
+        <h1 className="text-3xl font-bold mb-6 text-gray-900 capitalize   ">
           {currentView}
         </h1>
 
         {/* Render content based on currentView */}
         {currentView === "dashboard" && (
-          <Dashboard categories={categories} products={products} users = {users} />
+          <  Dashboard categories={categories} products={products} users = {users} />
         )}
         {currentView === "categories" && (
           <CategoriesSection

@@ -12,6 +12,7 @@ import passwordRoutes from "./routes/passwordRoutes.mjs";
 import userRoutes from  "./routes/userRoutes.mjs"
 import productRoutes from "./routes/productRoutes.mjs"
 import categoryRoutes from "./routes/catgoryRoutes.mjs"
+import path from "path"
 
 
 // Load env vars
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 // Routes
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", passwordRoutes); 
 app.use("/api/user", userRoutes);

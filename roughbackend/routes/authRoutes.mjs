@@ -30,6 +30,6 @@ router.get("/facebook", passport.authenticate("facebook", { scope: [ "email"] })
 router.get("/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login", session: false }), facebookCallback);
 
 // Logout
-router.get("/logout", logoutUser);
+router.post("/logout", logoutUser);
 
 export default router;
