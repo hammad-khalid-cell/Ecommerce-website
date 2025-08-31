@@ -35,6 +35,8 @@ const handleSubmit = async (e) => {
       console.log("Reset Link:", data.resetLink);
     }
   } catch (err) {
+    console.log("failed");
+    
     setErrors({ general: "Server error" });
   }
 };

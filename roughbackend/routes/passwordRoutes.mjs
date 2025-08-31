@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.mjs";
 import { hashPassword } from "../utils/hashPassword.mjs";
+import sendEmail from "../utils/sendEmail.mjs";
 
 const router = express.Router();
 import dotenv from "dotenv";
@@ -13,6 +14,8 @@ dotenv.config()
 router.post("/reset-password", async (req, res) => {
   const { email } = req.body;
   try {
+    
+    
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -20,9 +23,12 @@ router.post("/reset-password", async (req, res) => {
 
     user.resetToken = token;
     user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;
-    await user.save();
+    await user.save();    
 
-    const resetLink = `http://localhost:5173/reset-password/${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${user.resetToken}`;
+     await sendEmail(user.email, "Password Reset Request",
+    `You requested a password reset. Click here: ${resetLink}\n\nIf you did not request this, ignore this email.`
+  );
     res.json({ message: "Password reset link generated", resetLink });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
