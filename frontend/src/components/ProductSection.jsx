@@ -70,7 +70,7 @@ export default function ProductsSection({
             <tbody className="bg-white divide-y divide-gray-200">
               {products.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">{prod.name}</td>
+                  <td className="px-6 py-4 whitespace-normal ">{prod.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                       {prod.category?.name || "Unknown"}
                   </td>

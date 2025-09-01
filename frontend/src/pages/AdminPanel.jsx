@@ -85,24 +85,22 @@ const AdminPanel = () => {
     }
   };
 
-  const handleEditProduct = async (updatedProduct) => {
-    try {
-      const res = await editProduct({
-        id: updatedProduct._id, // pass id separately
-        ...updatedProduct, // spread other fields
-      }).unwrap();
 
-      // update local state
-      setProducts((products) =>
-        products.map((prod) => (prod._id === res._id ? res : prod))
-      );
+const handleEditProduct = async ({ id, formData }) => {
+  try {
+    const res = await editProduct({ id, formData }).unwrap();
 
-      setEditingProduct(null);
-      console.log("Product updated successfully:", res);
-    } catch (err) {
-      console.error("Error updating product:", err);
-    }
-  };
+    setProducts((products) =>
+      products.map((prod) => (prod._id === res._id ? res : prod))
+    );
+    setEditingProduct(null);
+    console.log("Product updated successfully:", res);
+  } catch (err) {
+    console.error("Error updating product:", err);
+  }
+};
+
+
 
   const handleDeleteCategory = async (id) => {
     try {
@@ -141,20 +139,21 @@ const AdminPanel = () => {
     }
   };
 
-  // --- Product Handlers ---
-  const handleAddProduct = async (newProduct) => {
-    try {
-      // Call RTK Query mutation
-      const res = await addProduct(newProduct).unwrap();
+// --- Product Handlers ---
+const handleAddProduct = async (formPayload) => {
+  try {
+    // Directly call RTK mutation
+    const res = await addProduct(formPayload).unwrap();
 
-      setProducts((products) => [...products, res]);
-      setIsAddingProduct(false);
-      setEditingProduct(null);
-      console.log("Product added successfully:", res);
-    } catch (err) {
-      console.error(" Error adding product:", err);
-    }
-  };
+    setProducts((products) => [...products, res]);
+    setIsAddingProduct(false);
+    setEditingProduct(null);
+    console.log("Product added successfully:", res);
+  } catch (err) {
+    console.error("Error adding product:", err);
+  }
+};
+
 
   if (!isAdmin) {
     return (

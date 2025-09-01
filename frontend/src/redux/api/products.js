@@ -9,20 +9,22 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    createProducts: builder.mutation({
-      query: (data) => ({
-        url: `${PRODUCT_URL}/create`,
-        method: "POST",
-        body: data,
-      }),
-    }),
-    editProducts: builder.mutation({
-      query: ({ id, ...data }) => ({
-        url: `${PRODUCT_URL}/${id}`,  
-        method: "PUT",
-        body: data,                   
-      }),
-    }),
+     createProducts: builder.mutation({
+  query: (formData) => ({
+    url: `${PRODUCT_URL}/create`,
+    method: "POST",
+    body: formData,
+  }),
+}),
+
+   editProducts: builder.mutation({
+  query: ({ id, formData }) => ({
+    url: `${PRODUCT_URL}/${id}`,
+    method: "PUT",
+    body: formData, // must be FormData, not JSON
+  }),
+}),
+
 
     deleteProducts: builder.mutation({
       query: (id) => ({

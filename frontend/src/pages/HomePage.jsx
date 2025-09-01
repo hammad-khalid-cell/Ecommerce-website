@@ -1,37 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { slides } from '../assets/images/slides';
 
-
-
-// Main HomePage component
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   
 
-  const slides = [
-    {
-      title: "Up to 10% off Voucher",
-      subtitle: "iPhone 14 Series",
-      image: "https://placehold.co/400x400/000000/ffffff?text=iPhone"
-    },
-    {
-      title: "New Arrivals",
-      subtitle: "Summer Collection",
-      image: "https://placehold.co/400x400/000000/ffffff?text=Summer"
-    },
-    {
-      title: "Limited Edition",
-      subtitle: "Gaming Gear",
-      image: "https://placehold.co/400x400/000000/ffffff?text=Gaming"
-    }
-  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 5000); // Change slide every 5 seconds
+    }, 5000); 
     
-    return () => clearInterval(interval); // Clean up the interval on component unmount
+    return () => clearInterval(interval); 
   }, [slides.length]);
 
   return (
@@ -90,11 +71,11 @@ const HomePage = () => {
           {/* Hero Banner */}
           <div className="relative w-full h-[344px] rounded-xl overflow-hidden shadow-lg bg-black text-white p-8 flex items-center justify-between transition-colors duration-500">
             {/* Background Image or Gradient (using a gradient for a clean look) */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-r from-gray-900 via-gray-800 to-black"></div>
+            <div className="absolute inset-0 z-0 bg-black"></div>
 
             {/* Text Content */}
-            <div className="relative z-10 flex flex-col space-y-4 max-w-sm">
-              <p className="text-sm font-semibold text-gray-400">{slides[currentSlide].subtitle}</p>
+            <div className="relative z-10 flex flex-col space-y-8 max-w-sm">
+              <p className="text-md font-semibold text-white">{slides[currentSlide].subtitle}</p>
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">{slides[currentSlide].title}</h1>
               <a href="#" className="flex items-center space-x-2 text-white font-semibold group">
                 <span>Shop Now</span>
@@ -106,7 +87,7 @@ const HomePage = () => {
 
             {/* Image Placeholder */}
             <div className="relative z-10 flex-shrink-0 hidden lg:block">
-              <img src={slides[currentSlide].image} alt={slides[currentSlide].title} className="w-64 md:w-80 h-auto object-contain" />
+              <img src={slides[currentSlide].image} alt={slides[currentSlide].title} className="w-64 md:w-120 h-auto object-contain" />
             </div>
 
             {/* Pagination Dots */}

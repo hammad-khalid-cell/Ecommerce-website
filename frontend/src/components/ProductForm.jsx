@@ -31,24 +31,73 @@ export default function ProductForm({
   //   e.preventDefault();
   //   onSave(formData);
   // };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const formPayload = new FormData();
-    formPayload.append("name", formData.name);
-    formPayload.append("price", formData.price);
-    formPayload.append("stock", formData.stock);
-    formPayload.append("category", formData.category);
-    formPayload.append("description", formData.description);
-    formPayload.append("status", formData.status);
-    if (formData.images && formData.images.length > 0) {
-      formData.images.forEach((file) => {
-        formPayload.append("images", file); // multiple images
-      });
+  const handleDeleteImage = async (index) => {
+    const imageToDelete = formData.images[index];
+    const productId = initialData?._id; // <-- get from initialData
+
+    if (typeof imageToDelete === "string") {
+      // Cloudinary image (already saved in DB)
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/products/${productId}/image`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ imageUrl: imageToDelete }),
+          }
+        );
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to delete");
+
+        // Update UI
+        setFormData((prev) => ({
+          ...prev,
+          images: prev.images.filter((_, i) => i !== index),
+        }));
+      } catch (err) {
+        console.error("Image delete error:", err);
+        alert("Failed to delete image");
+      }
+    } else {
+      // Local file (not uploaded yet)
+      setFormData((prev) => ({
+        ...prev,
+        images: prev.images.filter((_, i) => i !== index),
+      }));
     }
-
-    await onSave(formPayload); // send FormData
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formPayload = new FormData();
+
+  formPayload.append("name", formData.name);
+  formPayload.append("price", formData.price);
+  formPayload.append("stock", formData.stock);
+  // formPayload.append("category", formData.category);
+  formPayload.append("category", formData.category?._id || formData.category);
+
+  formPayload.append("description", formData.description);
+  formPayload.append("status", formData.status);
+
+  if (formData.images && formData.images.length > 0) {
+    formData.images.forEach((file) => {
+      formPayload.append("images", file);
+    });
+  }
+
+  if (initialData?._id) {
+    // Edit mode
+    await onSave({ id: initialData._id, formData: formPayload });
+  } else {
+    // Create mode
+    await onSave(formPayload);  // 👈 send raw FormData
+  }
+};
+
+  console.log(formData);
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-md  mx-auto">
@@ -104,18 +153,7 @@ export default function ProductForm({
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        {/* <div>
-          <label className="block text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={(e) =>
-              setFormData({ ...formData, images: e.target.files[0] })
-            }
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div> */}
+
         <div>
           <label className="block text-gray-700 mb-1">Images</label>
 
@@ -139,13 +177,40 @@ export default function ProductForm({
             className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200"
           >
             Upload Images
+            {}
           </button>
 
           {/* Show selected files */}
           {formData.images && formData.images.length > 0 && (
             <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
               {formData.images.map((file, index) => (
-                <li key={index}>{file.name}</li>
+                <li key={index} className="flex items-center justify-between">
+                  {typeof file === "string" ? (
+                    <a
+                      href={file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      <img
+                        src={file}
+                        alt={`img-${index}`}
+                        className="w-16 h-16 object-cover rounded mr-2 inline"
+                      />
+                    </a>
+                  ) : (
+                    <span>{file.name}</span>
+                  )}
+
+                  {/* Delete button */}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteImage(index)}
+                    className="ml-3 text-red-500 hover:text-red-700"
+                  >
+                    🗑️
+                  </button>
+                </li>
               ))}
             </ul>
           )}

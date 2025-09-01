@@ -28,11 +28,29 @@ export const uploadToCloudinary = (fileBuffer, folder = "uploads") => {
 };
 
 // Delete image from Cloudinary (optional, for product deletion or update)
-export const deleteFromCloudinary = async (publicId) => {
+// export const deleteFromCloudinary = async (publicId) => {
+//   try {
+//     const result = await cloudinary.uploader.destroy(publicId);
+//     return result;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+
+// Delete from cloudinary
+export const deleteFromCloudinary = async (url) => {
   try {
-    const result = await cloudinary.uploader.destroy(publicId);
-    return result;
-  } catch (error) {
-    throw error;
+    // Extract public_id from url
+    const parts = url.split("/");
+    const filename = parts.pop().split(".")[0]; // abc123
+    const folder = parts.slice(parts.indexOf("upload") + 1).join("/"); // products
+    const publicId = `${folder}/${filename}`;
+
+    await cloudinary.uploader.destroy(publicId);
+    return true;
+  } catch (err) {
+    console.error("Cloudinary delete error:", err);
+    return false;
   }
 };
