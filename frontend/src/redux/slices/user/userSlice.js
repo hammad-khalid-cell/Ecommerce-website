@@ -8,18 +8,23 @@ const initialState = {
 
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState : {user:null, loading:true},
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload;
       state.error = null;
+      state.loading =  false;
     },
     clearUser: (state) => {
       state.user = null;
       state.error = null;
+      state.loading =  false;
     },
+    startLoading: (state)=>{
+      state.loading= true;
+    }
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, startLoading } = userSlice.actions;
 export default userSlice.reducer;

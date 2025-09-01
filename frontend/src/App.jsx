@@ -11,19 +11,22 @@ import AdminRoute from "./components/AdminRoute";
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUser, clearUser } from "./redux/slices/user/userSlice";
+import { setUser, clearUser, startLoading } from "./redux/slices/user/userSlice";
+
 
 function App() {
   const dispatch = useDispatch();
 
+useEffect(() => {
   const fetchUser = async () => {
+    dispatch(startLoading());
     try {
       const res = await fetch("http://localhost:3000/api/user/me", {
         method: "GET",
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("not authenticated ");
+      if (!res.ok) throw new Error("not authenticated");
 
       const data = await res.json();
       dispatch(setUser(data));
@@ -33,9 +36,8 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, [dispatch]);
+  fetchUser();
+}, [dispatch]);
 
   return (
     <Router>

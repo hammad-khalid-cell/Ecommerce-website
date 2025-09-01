@@ -31,25 +31,24 @@ export default function ProductForm({
   //   e.preventDefault();
   //   onSave(formData);
   // };
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const formPayload = new FormData();
-  formPayload.append("name", formData.name);
-  formPayload.append("price", formData.price);
-  formPayload.append("stock", formData.stock);
-  formPayload.append("category", formData.category);
-  formPayload.append("description", formData.description);
-  formPayload.append("status", formData.status);
+    const formPayload = new FormData();
+    formPayload.append("name", formData.name);
+    formPayload.append("price", formData.price);
+    formPayload.append("stock", formData.stock);
+    formPayload.append("category", formData.category);
+    formPayload.append("description", formData.description);
+    formPayload.append("status", formData.status);
+    if (formData.images && formData.images.length > 0) {
+      formData.images.forEach((file) => {
+        formPayload.append("images", file); // multiple images
+      });
+    }
 
-  if (formData.images) {
-    formPayload.append("images", formData.images); // single image for now
-  }
-
-  await onSave(formPayload); // send FormData
-};
-
-
+    await onSave(formPayload); // send FormData
+  };
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-md  mx-auto">
@@ -105,7 +104,7 @@ const handleSubmit = async (e) => {
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div>
+        {/* <div>
           <label className="block text-gray-700">Image</label>
           <input
             type="file"
@@ -116,6 +115,40 @@ const handleSubmit = async (e) => {
             }
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div> */}
+        <div>
+          <label className="block text-gray-700 mb-1">Images</label>
+
+          {/* Hidden input */}
+          <input
+            type="file"
+            id="imageUpload"
+            name="images"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) =>
+              setFormData({ ...formData, images: Array.from(e.target.files) })
+            }
+          />
+
+          {/* Custom button */}
+          <button
+            type="button"
+            onClick={() => document.getElementById("imageUpload").click()}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200"
+          >
+            Upload Images
+          </button>
+
+          {/* Show selected files */}
+          {formData.images && formData.images.length > 0 && (
+            <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
+              {formData.images.map((file, index) => (
+                <li key={index}>{file.name}</li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div>
