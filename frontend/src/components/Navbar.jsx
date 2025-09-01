@@ -1,33 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { User, ShoppingBag, Heart, Search, ChevronDown } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { clearUser } from "../redux/slices/user/userSlice";
-import { useEffect } from "react";
 import { useGetUserLogoutMutation } from "../redux/api/auth";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-const [logoutUser, { data, isLoading, error }] = useGetUserLogoutMutation();
-  
-
+  const [logoutUser] = useGetUserLogoutMutation();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const modalRef = useRef(null);
 
   const handleLogout = async () => {
-  try {
-    await logoutUser().unwrap();   
-    dispatch(clearUser());
-    
-  } catch (err) {
-    console.error("Logout failed:", err);
-  }
-};
+    try {
+      await logoutUser().unwrap();
+      dispatch(clearUser());
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsProfileModalOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <nav className="bg-white  font-inter border-b-1 border-gray-200">
+    <nav className="bg-white font-inter border-b-1 border-gray-200">
       <div className="container mx-auto px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
         {/* Logo/Brand */}
         <div className="text-2xl font-bold font-sans tracking-wide mb-4 md:mb-0">
@@ -89,7 +98,7 @@ const [logoutUser, { data, isLoading, error }] = useGetUserLogoutMutation();
           />
 
           {/* Profile Dropdown */}
-          <div className="relative">
+          <div className="relative" ref={modalRef}>
             <div
               className="flex items-center space-x-1 cursor-pointer"
               onClick={() => setIsProfileModalOpen(!isProfileModalOpen)}
