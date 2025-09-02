@@ -1,23 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { slides } from '../assets/images/slides';
+import React, { useState, useEffect } from "react";
+import { slides } from "../assets/images/slides";
+import { useGetProductsQuery } from "../redux/api/products";
+import { useDispatch } from "react-redux";
+import { setProducts, clearProducts } from "../redux/slices/ProductSlice";
+import {setCategory} from "../redux/slices/categorySlice"
+import FlashSalesSection from "../components/flashSalesSection";
+import BrowseByCategory from "../components/BrowseByCategory";
+import { useGetCategoryQuery} from "../redux/api/category";
+import BestSellingProducts from "../components/BestSellingProducts";
+import { Expand } from "lucide-react";
+import ExploreProducts from "../components/ExploreProducts";
+import { Truck, Headphones, ShieldCheck, ArrowUp } from 'lucide-react';
+
+import NewArrival from "../components/NewArrival";
 
 const HomePage = () => {
+  const dispatch = useDispatch();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { data: productsData } = useGetProductsQuery();
+  const {data: categoryData} = useGetCategoryQuery();
+    const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
-  
+
+    const settings = {
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      arrows: true,
+      responsive: [
+        { breakpoint: 1024, settings: { slidesToShow: 3 } },
+        { breakpoint: 768, settings: { slidesToShow: 2 } },
+        { breakpoint: 480, settings: { slidesToShow: 1 } },
+      ],
+    };
 
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 5000); 
-    
-    return () => clearInterval(interval); 
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [slides.length]);
+
+  useEffect(() => {
+    dispatch(setProducts(productsData));
+    dispatch(setCategory(categoryData));
+    console.log("this is the products data", productsData);
+    console.log("this is the category data", categoryData);
+  }, [productsData]);
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      
       <div className="flex flex-col md:flex-row ">
         {/* Sidebar Navigation */}
         <aside className="w-full md:w-64 bg-white p-6 shadow-lg md:shadow-md flex-shrink-0">
@@ -25,42 +66,105 @@ const HomePage = () => {
             <ul className="space-y-1">
               {/* Nav Item with sub-menu indicator */}
               <li className="group">
-                <a href="#" className="flex justify-between items-center text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 sidebar-item">
+                <a
+                  href="#"
+                  className="flex justify-between items-center text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 sidebar-item"
+                >
                   <span>Woman's Fashion</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 arrow-icon transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 text-gray-400 arrow-icon transition-transform duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </a>
               </li>
               <li className="group">
-                <a href="#" className="flex justify-between items-center text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 sidebar-item">
+                <a
+                  href="#"
+                  className="flex justify-between items-center text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 sidebar-item"
+                >
                   <span>Men's Fashion</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 arrow-icon transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 text-gray-400 arrow-icon transition-transform duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </a>
               </li>
               {/* Nav Items without sub-menu indicator */}
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Electronics</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Electronics
+                </a>
               </li>
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Home & Lifestyle</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Home & Lifestyle
+                </a>
               </li>
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Medicine</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Medicine
+                </a>
               </li>
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Sports & Outdoor</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Sports & Outdoor
+                </a>
               </li>
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Baby's & Toys</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Baby's & Toys
+                </a>
               </li>
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Groceries & Pets</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Groceries & Pets
+                </a>
               </li>
               <li>
-                <a href="#" className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200">Health & Beauty</a>
+                <a
+                  href="#"
+                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Health & Beauty
+                </a>
               </li>
             </ul>
           </nav>
@@ -75,19 +179,41 @@ const HomePage = () => {
 
             {/* Text Content */}
             <div className="relative z-10 flex flex-col space-y-8 max-w-sm">
-              <p className="text-md font-semibold text-white">{slides[currentSlide].subtitle}</p>
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">{slides[currentSlide].title}</h1>
-              <a href="#" className="flex items-center space-x-2 text-white font-semibold group">
+              <p className="text-md font-semibold text-white">
+                {slides[currentSlide].subtitle}
+              </p>
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                {slides[currentSlide].title}
+              </h1>
+              <a
+                href="#"
+                className="flex items-center space-x-2 text-white font-semibold group"
+              >
                 <span>Shop Now</span>
-                <svg className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                <svg
+                  className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
                 </svg>
               </a>
             </div>
 
             {/* Image Placeholder */}
             <div className="relative z-10 flex-shrink-0 hidden lg:block">
-              <img src={slides[currentSlide].image} alt={slides[currentSlide].title} className="w-64 md:w-120 h-auto object-contain" />
+              <img
+                src={slides[currentSlide].image}
+                alt={slides[currentSlide].title}
+                className="w-64 md:w-120 h-auto object-contain"
+              />
             </div>
 
             {/* Pagination Dots */}
@@ -96,53 +222,78 @@ const HomePage = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-opacity duration-300 ${index === currentSlide ? 'bg-white opacity-100' : 'bg-white opacity-50'}`}
+                  className={`w-2 h-2 rounded-full transition-opacity duration-300 ${
+                    index === currentSlide
+                      ? "bg-white opacity-100"
+                      : "bg-white opacity-50"
+                  }`}
                 ></button>
               ))}
             </div>
           </div>
         </main>
       </div>
+
+      <div className="py-12 space-y-12">
+        <FlashSalesSection products = {productsData || []}/>
+        <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
+        <BrowseByCategory  categories = {categoryData || []}/>
+        <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
+        <BestSellingProducts products={productsData || []}/>
+        <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
+        <ExploreProducts  products={productsData || []} />
+        <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
+        <NewArrival />
+
+
+    <section className="py-20">
+      <div className="container mx-auto px-4 md:px-0">
+        <div className="flex flex-col md:flex-row items-center justify-center space-y-12 md:space-y-0 md:space-x-20">
+          {/* Feature 1: Free and Fast Delivery */}
+          <div className="flex flex-col items-center text-center max-w-xs">
+            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
+              <Truck size={36} color="white" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">FREE AND FAST DELIVERY</h3>
+            <p className="text-sm font-normal">
+              Free delivery for all orders over $140
+            </p>
+          </div>
+
+          {/* Feature 2: 24/7 Customer Service */}
+          <div className="flex flex-col items-center text-center max-w-xs">
+            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
+              <Headphones size={36} color="white" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">24/7 CUSTOMER SERVICE</h3>
+            <p className="text-sm font-normal">
+              Friendly 24/7 customer support
+            </p>
+          </div>
+
+          {/* Feature 3: Money Back Guarantee */}
+          <div className="flex flex-col items-center text-center max-w-xs">
+            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
+              <ShieldCheck size={36} color="white" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">MONEY BACK GUARANTEE</h3>
+            <p className="text-sm font-normal">
+              We return money within 30 days
+            </p>
+          </div>
+        </div>
+      </div>
       
+      {/* Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className="fixed bottom-8 right-8 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 p-2 rounded-full shadow-lg"
+      >
+        <ArrowUp size={24} className="text-gray-700" />
+      </button>
+    </section>
 
-      <div className='py-12 space-y-12'>
-        
-       <section>
-            <div className="flex items-center space-x-4 mb-8">
-              <div className="w-4 h-8 bg-red-500 rounded-sm"></div>
-              <h2 className="text-xl font-semibold text-red-500">
-                Today's
-              </h2>
-              <h3 className="text-4xl font-semibold">
-                Flash Sales
-              </h3>
-            </div>
-            {/* Countdown and Products grid would go here */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {/* Product Card - Example */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                <div className="relative">
-                  <img src="https://placehold.co/300x200/F5F5F5/4B5563?text=Controller" alt="Controller" className="w-full h-48 object-cover" />
-                  <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-35%</div>
-                </div>
-                <div className="p-4">
-                  <h4 className="text-lg font-semibold">HAVIT HV-G92 Gamepad</h4>
-                  <div className="text-red-500 font-bold mt-2">$120 <span className="text-gray-400 line-through ml-2">$160</span></div>
-                  <div className="flex items-center space-x-1 text-yellow-400 mt-2">
-                    {/* Stars would go here */}
-                    <span>(88)</span>
-                  </div>
-                </div>
-              </div>
-              {/* Repeat Product Card for other items */}
-            </div>
-            <div className="flex justify-center mt-8">
-              <button className="bg-red-500 text-white px-8 py-3 rounded-md font-semibold transition-colors duration-200 hover:bg-red-600">
-                View All Products
-              </button>
-            </div>
-          </section>
-
+      
       </div>
     </div>
   );

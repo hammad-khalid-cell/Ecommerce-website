@@ -1,4 +1,8 @@
 import heroImage1  from "./hero_endframe__cvklg0xk3w6e_large2.png"
+import heroImage2  from "./Gemini_Generated_Image_rmt0oormt0oormt0.png"
+import heroImage3  from "./Gemini_Generated_Image_krzst5krzst5krzs.png"
+
+
 
   export const slides = [
     {
@@ -9,11 +13,11 @@ import heroImage1  from "./hero_endframe__cvklg0xk3w6e_large2.png"
     {
       title: "New Arrivals",
       subtitle: "Summer Collection",
-      image: "https://placehold.co/400x400/000000/ffffff?text=Summer"
+      image: heroImage2
     },
     {
       title: "Limited Edition",
       subtitle: "Gaming Gear",
-      image: "https://placehold.co/400x400/000000/ffffff?text=Gaming"
+      image: heroImage3
     }
   ];

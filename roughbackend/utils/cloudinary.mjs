@@ -27,17 +27,6 @@ export const uploadToCloudinary = (fileBuffer, folder = "uploads") => {
   });
 };
 
-// Delete image from Cloudinary (optional, for product deletion or update)
-// export const deleteFromCloudinary = async (publicId) => {
-//   try {
-//     const result = await cloudinary.uploader.destroy(publicId);
-//     return result;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-
 // Delete from cloudinary
 export const deleteFromCloudinary = async (url) => {
   try {
