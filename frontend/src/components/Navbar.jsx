@@ -9,6 +9,13 @@ const Navbar = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [logoutUser] = useGetUserLogoutMutation();
+  const [searchTerm, setSearchTerm] = useState("");
+  const products = useSelector((state) => state.products.product || []);
+  const filteredProducts = searchTerm
+    ? products.filter((p) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const modalRef = useRef(null);
@@ -80,12 +87,33 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="What are you looking for?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-gray-100 text-xs rounded-md py-3 pl-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
             />
+
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
               <Search size={20} />
             </div>
           </div>
+          {searchTerm && (
+            <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 z-50 max-h-60 overflow-y-auto">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((prod) => (
+                  <Link
+                    key={prod._id}
+                    to={`/products/exploreProduct/${prod.name}`}
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setSearchTerm("")} // clear after clicking
+                  >
+                    {prod.name}
+                  </Link>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-gray-500">No products found</div>
+              )}
+            </div>
+          )}
 
           {/* Icons */}
           <Heart

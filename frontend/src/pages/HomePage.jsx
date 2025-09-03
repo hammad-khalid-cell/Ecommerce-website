@@ -3,44 +3,43 @@ import { slides } from "../assets/images/slides";
 import { useGetProductsQuery } from "../redux/api/products";
 import { useDispatch } from "react-redux";
 import { setProducts, clearProducts } from "../redux/slices/ProductSlice";
-import {setCategory} from "../redux/slices/categorySlice"
+import { setCategory } from "../redux/slices/categorySlice";
 import FlashSalesSection from "../components/flashSalesSection";
 import BrowseByCategory from "../components/BrowseByCategory";
-import { useGetCategoryQuery} from "../redux/api/category";
+import { useGetCategoryQuery } from "../redux/api/category";
 import BestSellingProducts from "../components/BestSellingProducts";
 import { Expand } from "lucide-react";
 import ExploreProducts from "../components/ExploreProducts";
-import { Truck, Headphones, ShieldCheck, ArrowUp } from 'lucide-react';
-
+import { Truck, Headphones, ShieldCheck, ArrowUp } from "lucide-react";
+import { Link } from "react-router-dom";
 import NewArrival from "../components/NewArrival";
 
 const HomePage = () => {
   const dispatch = useDispatch();
   const [currentSlide, setCurrentSlide] = useState(0);
   const { data: productsData } = useGetProductsQuery();
-  const {data: categoryData} = useGetCategoryQuery();
-    const scrollToTop = () => {
+  const { data: categoryData } = useGetCategoryQuery();
+  const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
+  const type = "";
 
-
-    const settings = {
-      dots: true,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 4,
-      slidesToScroll: 1,
-      arrows: true,
-      responsive: [
-        { breakpoint: 1024, settings: { slidesToShow: 3 } },
-        { breakpoint: 768, settings: { slidesToShow: 2 } },
-        { breakpoint: 480, settings: { slidesToShow: 1 } },
-      ],
-    };
-
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: true,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
+    ],
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,108 +63,18 @@ const HomePage = () => {
         <aside className="w-full md:w-64 bg-white p-6 shadow-lg md:shadow-md flex-shrink-0">
           <nav>
             <ul className="space-y-1">
+              {categoryData?.map((cat, index) => (
+                <li key={index}>
+                  <Link to={`/products/byCategory/${cat.name}`}>
+                    <p
+                      className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      {cat.name}
+                    </p>
+                  </Link>
+                </li>
+              ))}
               {/* Nav Item with sub-menu indicator */}
-              <li className="group">
-                <a
-                  href="#"
-                  className="flex justify-between items-center text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 sidebar-item"
-                >
-                  <span>Woman's Fashion</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-gray-400 arrow-icon transition-transform duration-200"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              </li>
-              <li className="group">
-                <a
-                  href="#"
-                  className="flex justify-between items-center text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 sidebar-item"
-                >
-                  <span>Men's Fashion</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-gray-400 arrow-icon transition-transform duration-200"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              </li>
-              {/* Nav Items without sub-menu indicator */}
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Electronics
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Home & Lifestyle
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Medicine
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Sports & Outdoor
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Baby's & Toys
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Groceries & Pets
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Health & Beauty
-                </a>
-              </li>
             </ul>
           </nav>
         </aside>
@@ -235,65 +144,68 @@ const HomePage = () => {
       </div>
 
       <div className="py-12 space-y-12">
-        <FlashSalesSection products = {productsData || []}/>
+        <FlashSalesSection products={productsData || []} type="flashSale" />
         <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
-        <BrowseByCategory  categories = {categoryData || []}/>
+        <BrowseByCategory categories={categoryData || []} type="byCategory" />
         <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
-        <BestSellingProducts products={productsData || []}/>
+        <BestSellingProducts products={productsData || []} type="bestSelling" />
         <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
-        <ExploreProducts  products={productsData || []} />
+        <ExploreProducts products={productsData || []} type="exploreProduct" />
         <div className="h-1 bg-gray-200 w-full mx-8 m-4"></div>
         <NewArrival />
 
+        <section className="py-20">
+          <div className="container mx-auto px-4 md:px-0">
+            <div className="flex flex-col md:flex-row items-center justify-center space-y-12 md:space-y-0 md:space-x-20">
+              {/* Feature 1: Free and Fast Delivery */}
+              <div className="flex flex-col items-center text-center max-w-xs">
+                <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
+                  <Truck size={36} color="white" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">
+                  FREE AND FAST DELIVERY
+                </h3>
+                <p className="text-sm font-normal">
+                  Free delivery for all orders over $140
+                </p>
+              </div>
 
-    <section className="py-20">
-      <div className="container mx-auto px-4 md:px-0">
-        <div className="flex flex-col md:flex-row items-center justify-center space-y-12 md:space-y-0 md:space-x-20">
-          {/* Feature 1: Free and Fast Delivery */}
-          <div className="flex flex-col items-center text-center max-w-xs">
-            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
-              <Truck size={36} color="white" strokeWidth={1.5} />
+              {/* Feature 2: 24/7 Customer Service */}
+              <div className="flex flex-col items-center text-center max-w-xs">
+                <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
+                  <Headphones size={36} color="white" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">
+                  24/7 CUSTOMER SERVICE
+                </h3>
+                <p className="text-sm font-normal">
+                  Friendly 24/7 customer support
+                </p>
+              </div>
+
+              {/* Feature 3: Money Back Guarantee */}
+              <div className="flex flex-col items-center text-center max-w-xs">
+                <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
+                  <ShieldCheck size={36} color="white" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">
+                  MONEY BACK GUARANTEE
+                </h3>
+                <p className="text-sm font-normal">
+                  We return money within 30 days
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">FREE AND FAST DELIVERY</h3>
-            <p className="text-sm font-normal">
-              Free delivery for all orders over $140
-            </p>
           </div>
 
-          {/* Feature 2: 24/7 Customer Service */}
-          <div className="flex flex-col items-center text-center max-w-xs">
-            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
-              <Headphones size={36} color="white" strokeWidth={1.5} />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">24/7 CUSTOMER SERVICE</h3>
-            <p className="text-sm font-normal">
-              Friendly 24/7 customer support
-            </p>
-          </div>
-
-          {/* Feature 3: Money Back Guarantee */}
-          <div className="flex flex-col items-center text-center max-w-xs">
-            <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6">
-              <ShieldCheck size={36} color="white" strokeWidth={1.5} />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">MONEY BACK GUARANTEE</h3>
-            <p className="text-sm font-normal">
-              We return money within 30 days
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Scroll to Top Button */}
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-8 right-8 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 p-2 rounded-full shadow-lg"
-      >
-        <ArrowUp size={24} className="text-gray-700" />
-      </button>
-    </section>
-
-      
+          {/* Scroll to Top Button */}
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 p-2 rounded-full shadow-lg"
+          >
+            <ArrowUp size={24} className="text-gray-700" />
+          </button>
+        </section>
       </div>
     </div>
   );

@@ -186,6 +186,7 @@ router.get("/get", async (req, res) => {
 // --- GET SINGLE PRODUCT (Public) ---
 router.get("/:id", async (req, res) => {
   try {
+    
     console.log("this is the request id ",req.params.id);
     
     const product = await Product.findById(req.params.id)

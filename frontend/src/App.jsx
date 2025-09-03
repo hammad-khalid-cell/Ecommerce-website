@@ -8,6 +8,8 @@ import ForgotPassword from "./pages/ForgetPassword";
 import AdminPanel from "./pages/AdminPanel";
 import UnAuthorized from "./pages/UnAuthorized";
 import AdminRoute from "./components/AdminRoute";
+import ProductsByType from "./pages/ProductsByType"
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -52,6 +54,8 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/ForgetPassword" element={<ForgotPassword />} />
           <Route path="/UnAuthorized" element={<UnAuthorized />} />
+          <Route path="/products/:type/:name?" element={<ProductsByType/>}/>
+          <Route path="/products/productDetail/:id" element={<ProductDetailPage/>}/>
         </Route>
         <Route
           path="/AdminPanel"

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Link } from "react-router-dom";
 
-const BestSellingProducts = ({ products }) => {
+const BestSellingProducts = ({ products, type }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -29,10 +30,13 @@ const BestSellingProducts = ({ products }) => {
           </div>
         </div>
         <div className="flex justify-center mt-8">
+          <Link to={`/products/${type}/`}>
+
           <button className="bg-red-500 text-white px-8 py-3 rounded-md font-semibold transition-colors duration-200 hover:bg-red-600">
             View All Products
           </button> 
-        </div>
+           </Link>
+        </div>  
       </div>
 <div className="flash-sales-slider">
   <Slider   {...settings}>

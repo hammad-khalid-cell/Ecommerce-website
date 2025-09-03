@@ -3,7 +3,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const FlashSalesSection = ({products}) => {
+const FlashSalesSection = ({products, type}) => {
   const [timeLeft, setTimeLeft] = useState(
     calculateTimeLeft(new Date("2025-09-05T23:59:59"))
   );

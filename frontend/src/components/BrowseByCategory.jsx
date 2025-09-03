@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Link } from 'react-router-dom';
 
 // Import all necessary icons from lucid-react
 import {
@@ -18,9 +19,10 @@ import {
   PersonStanding,
 } from 'lucide-react';
 
-const BrowseByCategory = ({ categories }) => {
+const BrowseByCategory = ({ categories, type }) => {
   // Create a ref to access the slider methods
   const sliderRef = useRef(null);
+  
 
   // Mapping object to link category names to Lucid icons
   const iconMap = {
@@ -99,12 +101,16 @@ const BrowseByCategory = ({ categories }) => {
           if (!IconComponent) return null;
           
           return (
+            <Link to={`/products/${type}/${category.name}`}>
             <div key={index} className="p-2">
               <div className="flex flex-col items-center justify-center p-8 border border-gray-300 rounded-lg h-40 w-full hover:bg-red-500 hover:text-white transition-colors duration-200 cursor-pointer">
                 <IconComponent size={40} className="mb-4" strokeWidth={1.5} />
                 <span className="text-center font-medium">{category.name}</span>
               </div>
             </div>
+
+            </Link>
+            
           );
         })}
       </Slider>
