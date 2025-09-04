@@ -1,37 +1,75 @@
-import React from "react";
-import {Link} from "react-router-dom"
-import { Heart, Eye } from 'lucide-react';  
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Heart, Eye } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { addToCart, clearCart } from "../redux/slices/cartSlice";
+import { useAddToCartMutation } from "../redux/api/cart";
+
+const ProductCard = ({ prod, avgRating, discountPercentage }) => {
+ const { user } = useSelector((state) => state.user);
+const dispatch = useDispatch();
+const [addToCartApi] = useAddToCartMutation();
+
+const handleAddToCart = async () => {
+  try {
+    if (user) {
+      const res = await addToCartApi({ productId: prod._id, quantity: 1, userId : user._id });
+      console.log("API cart:", res);
+    } else {
+      dispatch(addToCart({ 
+        productId: prod._id,   // ✅ ensure productId exists
+        name: prod.name,
+        price: prod.price,
+        image: prod.images?.[0],
+        quantity: 1
+      }));
+    }
+  } catch (err) {
+    console.log("Error while adding the product to cart");
+  }
+};
 
 
-const ProductCard = ({prod, avgRating, discountPercentage}) => {
   return (
-
-    <Link to={`/products/productDetail/${prod._id}`}>
-      <div key={prod._id} className="p-2">
+    <div key={prod._id} className="p-2">
       <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 relative group">
-        <div className="relative h-60 w-full flex justify-center items-center p-4 bg-gray-200">
-          <img
-            src={prod.images?.[0]}
-            alt={prod.name}
-            className="max-h-full max-w-full object-contain"
-          />
-          {discountPercentage > 0 && (
-            <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              -{discountPercentage}%
+        
+        {/* Product Image + Details go to Product Detail page */}
+        <Link to={`/products/productDetail/${prod._id}`}>
+          <div className="relative h-60 w-full flex justify-center items-center p-4 bg-gray-200">
+            <img
+              src={prod.images?.[0]}
+              alt={prod.name}
+              className="max-h-full max-w-full object-contain"
+            />
+            {discountPercentage > 0 && (
+              <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                -{discountPercentage}%
+              </div>
+            )}
+            <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button className="bg-white rounded-full p-2 hover:bg-gray-100 transition-colors">
+                <Heart className="h-5 w-5 text-gray-700" />
+              </button>
+              <button className="bg-white rounded-full p-2 hover:bg-gray-100 transition-colors">
+                <Eye className="h-5 w-5 text-gray-700" />
+              </button>
             </div>
-          )}
-          <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button className="bg-white rounded-full p-2 hover:bg-gray-100 transition-colors">
-              <Heart className="h-5 w-5 text-gray-700" />
-            </button>
-            <button className="bg-white rounded-full p-2 hover:bg-gray-100 transition-colors">
-              <Eye className="h-5 w-5 text-gray-700" />
-            </button>
           </div>
+        </Link>
+
+        {/* Add To Cart (separate from Link) */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white
+         text-center opacity-0 group-hover:opacity-80 transition-opacity">
+          <button
+            onClick={handleAddToCart}
+            className="w-full font-semibold"
+          >
+            Add To Cart
+          </button>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white text-center opacity-0 group-hover:opacity-50 transition-opacity">
-          <button className="w-full font-semibold">Add To Cart</button>
-        </div>
+
+        {/* Product Info */}
         <div className="p-4">
           <h4 className="text-lg font-semibold truncate">{prod.name}</h4>
           <div className="text-red-500 font-bold mt-2">
@@ -67,8 +105,6 @@ const ProductCard = ({prod, avgRating, discountPercentage}) => {
         </div>
       </div>
     </div>
-    </Link>
-  
   );
 };
 

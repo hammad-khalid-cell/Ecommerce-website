@@ -85,7 +85,6 @@ const AdminPanel = () => {
     }
   };
 
-
 const handleEditProduct = async ({ id, formData }) => {
   try {
     const res = await editProduct({ id, formData }).unwrap();
@@ -99,8 +98,6 @@ const handleEditProduct = async ({ id, formData }) => {
     console.error("Error updating product:", err);
   }
 };
-
-
 
   const handleDeleteCategory = async (id) => {
     try {

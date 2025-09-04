@@ -12,6 +12,10 @@ import passwordRoutes from "./routes/passwordRoutes.mjs";
 import userRoutes from  "./routes/userRoutes.mjs"
 import productRoutes from "./routes/productRoutes.mjs"
 import categoryRoutes from "./routes/catgoryRoutes.mjs"
+import cartRoutes from "./routes/cartRoutes.mjs";
+
+
+
 import path from "path"
 
 
@@ -40,6 +44,7 @@ app.use("/api/auth", passwordRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/products", productRoutes)
 app.use("/api/category", categoryRoutes)
+app.use("/api/cart", cartRoutes);
 
 app.get("/", (req, res) => res.send("Server is running 🚀"));
 

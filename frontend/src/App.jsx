@@ -10,6 +10,7 @@ import UnAuthorized from "./pages/UnAuthorized";
 import AdminRoute from "./components/AdminRoute";
 import ProductsByType from "./pages/ProductsByType"
 import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -56,6 +57,7 @@ function App() {
           <Route path="/UnAuthorized" element={<UnAuthorized />} />
           <Route path="/products/:type/:name?" element={<ProductsByType/>}/>
           <Route path="/products/productDetail/:id" element={<ProductDetailPage/>}/>
+          <Route path="/cartPage" element={<CartPage/>}/>
         </Route>
         <Route
           path="/AdminPanel"

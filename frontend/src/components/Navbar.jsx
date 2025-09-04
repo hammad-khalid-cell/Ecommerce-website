@@ -120,10 +120,13 @@ const Navbar = () => {
             size={24}
             className="text-gray-700 cursor-pointer hover:text-red-500 transition-colors duration-200"
           />
+          <Link to="/cartPage">
           <ShoppingBag
             size={24}
             className="text-gray-700 cursor-pointer hover:text-black transition-colors duration-200"
           />
+          </Link>
+          
 
           {/* Profile Dropdown */}
           <div className="relative" ref={modalRef}>
