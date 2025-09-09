@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, updateQuantity } from "../redux/slices/cartSlice";
+import { useUpdateCartItemMutation } from "../redux/api/cart";
 
 const CartPage = () => {
   const cartDataLocal = useSelector((state) => state.cart.items);
+  const [updateCartItemQuantity] = useUpdateCartItemMutation();
   const dispatch = useDispatch();
 
   const [cartItems, setCartItems] = useState([]);
@@ -17,14 +19,28 @@ const CartPage = () => {
 
 
   const handleRemoveItem = (id) => {
-    dispatch(removeFromCart(id)); // removes from Redux + localStorage
+    dispatch(removeFromCart(id));
+     // removes from Redux + localStorage
   };
 
 
-  const handleQuantityChange = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    dispatch(updateQuantity({ productId: id, quantity: newQuantity }));
-    
+  const handleQuantityChange = async (id, newQuantity) => {
+    const res =   await updateCartItemQuantity({productId : id, quantity : newQuantity});
+    if (newQuantity < 1){
+      return;
+    }
+    else{
+      
+      dispatch(updateQuantity({ productId: id, quantity: newQuantity }));
+      try{
+        const res =   await updateCartItemQuantity({productId : id, quantity : newQuantity});
+        console.log("res ",res);
+        
+       
+      }catch(err){
+        console.log("Error updating the user cart item quantity");
+      }
+    }
 
   };
 

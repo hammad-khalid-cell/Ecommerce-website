@@ -14,10 +14,18 @@ const handleAddToCart = async () => {
   try {
     if (user) {
       const res = await addToCartApi({ productId: prod._id, quantity: 1, userId : user._id });
+      dispatch(addToCart({ 
+        productId: prod._id,   
+        name: prod.name,
+        price: prod.price,
+        image: prod.images?.[0],
+        quantity: 1
+      }));
+
       console.log("API cart:", res);
     } else {
       dispatch(addToCart({ 
-        productId: prod._id,   // ✅ ensure productId exists
+        productId: prod._id,   
         name: prod.name,
         price: prod.price,
         image: prod.images?.[0],

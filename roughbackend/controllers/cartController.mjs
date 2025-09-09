@@ -37,9 +37,6 @@ export const addToCart = async (req, res) => {
     const existingItem = cart.items.find(
       (item) => item.product.toString() === productId
     );
-    
-    
-
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
@@ -61,13 +58,13 @@ export const addToCart = async (req, res) => {
 // Update quantity of item
 export const updateCartItem = async (req, res) => {
   try {
+    
     const { itemId } = req.params;
     const { quantity } = req.body;
-
-    const cart = await Cart.findOne({ user: req.user._id, status: "active" });
+    const cart = await Cart.findOne({ user: req.user.id, status: "active" });
     if (!cart) return res.status(404).json({ error: "Cart not found" });
 
-    const item = cart.items.id(itemId);
+        const item = cart.items.find((i) => i.product.toString() === itemId);
     if (!item) return res.status(404).json({ error: "Item not found in cart" });
 
     item.quantity = quantity;
