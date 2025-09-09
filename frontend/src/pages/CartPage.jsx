@@ -2,55 +2,89 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, updateQuantity } from "../redux/slices/cartSlice";
-import { useUpdateCartItemMutation } from "../redux/api/cart";
+import {
+  useUpdateCartItemMutation,
+  useRemoveCartItemMutation,
+  useGetCartQuery,
+} from "../redux/api/cart";
+
+
+const normalizeCartItems = (items = []) =>
+  items.map((item) => ({
+    productId: item.product?._id || item.productId,
+    name: item.product?.name || item.name,
+    image: item.product?.images?.[0] || item.image,
+    price: item.priceAtTime || item.product?.price || 0,
+    quantity: item.quantity,
+    _id: item._id, // backend cart item id
+  }));
 
 const CartPage = () => {
   const cartDataLocal = useSelector((state) => state.cart.items);
-  const [updateCartItemQuantity] = useUpdateCartItemMutation();
-  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
 
   const [cartItems, setCartItems] = useState([]);
+  const dispatch = useDispatch();
 
+  const [updateCartItemQuantityApi] = useUpdateCartItemMutation();
+  const [removeFromCartApi] = useRemoveCartItemMutation();
+  const { data: cartData, error, isLoading } = useGetCartQuery();
+
+  // 🔹 Sync local vs backend cart
   useEffect(() => {
-    if (Array.isArray(cartDataLocal)) {
-      setCartItems(cartDataLocal);
-    }
-  }, [cartDataLocal]);
-
-
-  const handleRemoveItem = (id) => {
-    dispatch(removeFromCart(id));
-     // removes from Redux + localStorage
-  };
-
-
-  const handleQuantityChange = async (id, newQuantity) => {
-    const res =   await updateCartItemQuantity({productId : id, quantity : newQuantity});
-    if (newQuantity < 1){
-      return;
-    }
-    else{
-      
-      dispatch(updateQuantity({ productId: id, quantity: newQuantity }));
-      try{
-        const res =   await updateCartItemQuantity({productId : id, quantity : newQuantity});
-        console.log("res ",res);
-        
-       
-      }catch(err){
-        console.log("Error updating the user cart item quantity");
+    if (user) {
+      if (cartData?.items) {
+        setCartItems(normalizeCartItems(cartData.items));
+      }
+    } else {
+      if (Array.isArray(cartDataLocal)) {
+        setCartItems(normalizeCartItems(cartDataLocal));
       }
     }
+  }, [user, cartData, cartDataLocal]);
 
+  const handleRemoveItem = async (itemId) => {
+    dispatch(removeFromCart(itemId));
+    setCartItems((prev) => prev.filter((i) => i._id !== itemId));
+
+    try {
+      const res = await removeFromCartApi({ itemId }).unwrap();
+      console.log("Deleted from backend:", res);
+    } catch (err) {
+      console.log("Error deleting item from backend", err);
+    }
   };
 
-  // ✅ Totals
+  // 🔹 Update quantity
+  const handleQuantityChange = async (itemId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    dispatch(updateQuantity({ productId: itemId, quantity: newQuantity }));
+    setCartItems((prev) =>
+      prev.map((i) => (i._id === itemId ? { ...i, quantity: newQuantity } : i))
+    );
+
+    try {
+      const res = await updateCartItemQuantityApi({
+        itemId,
+        quantity: newQuantity,
+      }).unwrap();
+      console.log("Updated on backend:", res);
+    } catch (err) {
+      console.log("Error updating cart item on backend", err);
+    }
+  };
+
+  // 🔹 Totals
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
   const shipping = subtotal > 0 ? 0 : 0; // free shipping
   const total = subtotal + shipping;
+
+  if (isLoading) return <p className="text-center py-10">Loading cart...</p>;
+  if (error) return <p className="text-center py-10 text-red-500">Error loading cart</p>;
 
   return (
     <section className="py-12 container mx-auto px-4 md:px-0">
@@ -73,9 +107,9 @@ const CartPage = () => {
 
       {/* Cart Items */}
       <div className="space-y-6 md:space-y-0">
-        {cartItems.map((item) => (
+        {cartItems?.map((item) => (
           <div
-            key={item.productId}
+            key={item._id}
             className="grid grid-cols-1 md:grid-cols-5 items-center text-center py-4 border-b"
           >
             {/* Product */}
@@ -90,14 +124,16 @@ const CartPage = () => {
 
             {/* Price */}
             <div className="mb-2 md:mb-0 text-gray-700">
-              ${item.price.toFixed(2)}
+              ${item.price?.toFixed(2)}
             </div>
 
             {/* Quantity */}
             <div className="flex justify-center mb-2 md:mb-0">
               <div className="flex items-center border rounded-lg">
                 <button
-                  onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
+                  onClick={() =>
+                    handleQuantityChange(item._id, item.quantity - 1)
+                  }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-100 transition-colors rounded-l-lg"
                 >
                   -
@@ -106,12 +142,14 @@ const CartPage = () => {
                   type="text"
                   value={item.quantity}
                   onChange={(e) =>
-                    handleQuantityChange(item.productId, parseInt(e.target.value) || 0)
+                    handleQuantityChange(item._id, parseInt(e.target.value) || 0)
                   }
                   className="w-12 text-center bg-transparent"
                 />
                 <button
-                  onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+                  onClick={() =>
+                    handleQuantityChange(item._id, item.quantity + 1)
+                  }
                   className="px-3 py-1 text-gray-500 hover:bg-gray-100 transition-colors rounded-r-lg"
                 >
                   +
@@ -127,7 +165,7 @@ const CartPage = () => {
             {/* Remove */}
             <div>
               <button
-                onClick={() => handleRemoveItem(item.productId)}
+                onClick={() => handleRemoveItem(item._id)}
                 className="text-red-500 hover:underline"
               >
                 Remove
@@ -165,9 +203,12 @@ const CartPage = () => {
               <span>${total.toFixed(2)}</span>
             </div>
           </div>
+          <Link to="/checkOut" >
+
           <button className="w-full bg-red-500 text-white font-semibold py-3 mt-6 rounded-md hover:bg-red-600 transition-colors">
             Proceed to checkout
           </button>
+          </Link>
         </div>
       </div>
     </section>

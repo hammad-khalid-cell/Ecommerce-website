@@ -11,6 +11,8 @@ import AdminRoute from "./components/AdminRoute";
 import ProductsByType from "./pages/ProductsByType"
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
+import { Toaster } from "react-hot-toast";
+
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -19,11 +21,14 @@ import {
   clearUser,
   startLoading,
 } from "./redux/slices/user/userSlice";
+import Checkout from "./pages/CheckOut";
+import Contact from "./pages/Contact";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    
     const fetchUser = async () => {
       dispatch(startLoading());
       try {
@@ -58,6 +63,9 @@ function App() {
           <Route path="/products/:type/:name?" element={<ProductsByType/>}/>
           <Route path="/products/productDetail/:id" element={<ProductDetailPage/>}/>
           <Route path="/cartPage" element={<CartPage/>}/>
+          <Route path="/checkOut" element={<Checkout/>}/>
+          <Route path="/contact" element={<Contact/>}/>
+
         </Route>
         <Route
           path="/AdminPanel"
@@ -68,6 +76,7 @@ function App() {
           }
         />
       </Routes>
+            <Toaster position="top-right" reverseOrder={false} />
     </Router>
   );
 }

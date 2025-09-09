@@ -8,17 +8,24 @@ import FlashSalesSection from "../components/flashSalesSection";
 import BrowseByCategory from "../components/BrowseByCategory";
 import { useGetCategoryQuery } from "../redux/api/category";
 import BestSellingProducts from "../components/BestSellingProducts";
-import { Expand } from "lucide-react";
 import ExploreProducts from "../components/ExploreProducts";
 import { Truck, Headphones, ShieldCheck, ArrowUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import NewArrival from "../components/NewArrival";
+import { useAddToCartMutation } from "../redux/api/cart";
+import { clearCart } from "../redux/slices/cartSlice";
+
 
 const HomePage = () => {
   const dispatch = useDispatch();
+  const cartDataLocal =  useSelector((state)=> state.cart.items);
+  const {user} =  useSelector((state)=> state.user) 
   const [currentSlide, setCurrentSlide] = useState(0);
   const { data: productsData } = useGetProductsQuery();
   const { data: categoryData } = useGetCategoryQuery();
+  // const [cartDataLocal , setcartDataLocal] =  useState([]);
+  const [addToCartApi] =  useAddToCartMutation();
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -26,7 +33,6 @@ const HomePage = () => {
     });
   };
   const type = "";
-
   const settings = {
     dots: true,
     infinite: true,
@@ -41,6 +47,33 @@ const HomePage = () => {
     ],
   };
 
+  const mergeCart = async () => {
+  if (cartDataLocal.length > 0 && user?._id) {
+    try {
+      for (const item of cartDataLocal) {
+        await addToCartApi({
+          userId: user._id,
+          productId: item.productId,
+          quantity: item.quantity,
+        }).unwrap();
+      }
+
+      console.log("Cart merged to backend ✅");
+
+      dispatch(clearCart());
+      localStorage.removeItem("cart");
+    } catch (err) {
+      console.error("Error merging cart:", err);
+    }
+  }
+};
+   useEffect(() => {
+  if (user?._id && cartDataLocal.length > 0) {
+    mergeCart();
+  }
+}, [user?._id]);
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
@@ -54,7 +87,11 @@ const HomePage = () => {
     dispatch(setCategory(categoryData));
     console.log("this is the products data", productsData);
     console.log("this is the category data", categoryData);
+    console.log("this is the cart data", cartDataLocal);
   }, [productsData]);
+
+  
+
 
   return (
     <div className="bg-gray-100 min-h-screen">

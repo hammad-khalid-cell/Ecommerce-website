@@ -5,7 +5,10 @@ export const cartApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get current user cart
     getCart: builder.query({
-      query: () => "/cart",
+      query: () => ({
+        url: `${CART_URL}/`,
+        method: "GET",
+      }),
       providesTags: ["Cart"],
     }),
 
@@ -19,20 +22,20 @@ export const cartApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Cart"],
     }),
 
-    // Update item quantity
+    // Update item quantity (uses cart itemId, not productId)
     updateCartItem: builder.mutation({
-      query: ({ productId, quantity }) => ({
-        url: `${CART_URL}/${productId}`,
+      query: ({ itemId, quantity }) => ({
+        url: `${CART_URL}/${itemId}`,  // ✅ backend expects itemId in params
         method: "PATCH",
         body: { quantity },
       }),
       invalidatesTags: ["Cart"],
     }),
 
-    // Remove item from cart
+    // Remove item from cart (uses cart itemId)
     removeCartItem: builder.mutation({
-      query: (itemId) => ({
-        url: `/cart/${itemId}`,
+      query: ({ itemId }) => ({
+        url: `${CART_URL}/${itemId}`,  // ✅ backend expects itemId
         method: "DELETE",
       }),
       invalidatesTags: ["Cart"],

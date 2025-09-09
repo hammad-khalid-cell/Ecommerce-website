@@ -11,7 +11,7 @@ const FlashSalesSection = ({products, type}) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(new Date("2025-09-05T23:59:59")));
+      setTimeLeft(calculateTimeLeft(new Date("2025-09-17T23:59:59")));
     }, 1000);
     return () => clearTimeout(timer);
   });

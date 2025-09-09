@@ -1,48 +1,49 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Heart, Eye } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart, clearCart } from "../redux/slices/cartSlice";
+import { addToCart } from "../redux/slices/cartSlice";
 import { useAddToCartMutation } from "../redux/api/cart";
+import toast from "react-hot-toast";
 
 const ProductCard = ({ prod, avgRating, discountPercentage }) => {
- const { user } = useSelector((state) => state.user);
-const dispatch = useDispatch();
-const [addToCartApi] = useAddToCartMutation();
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [addToCartApi] = useAddToCartMutation();
 
-const handleAddToCart = async () => {
-  try {
-    if (user) {
-      const res = await addToCartApi({ productId: prod._id, quantity: 1, userId : user._id });
-      dispatch(addToCart({ 
-        productId: prod._id,   
-        name: prod.name,
-        price: prod.price,
-        image: prod.images?.[0],
-        quantity: 1
-      }));
+  const handleAddToCart = async () => {
+    try {
+      if (user) {
+        await addToCartApi({
+          productId: prod._id,
+          quantity: 1,
+          userId: user._id,
+        }).unwrap();
 
-      console.log("API cart:", res);
-    } else {
-      dispatch(addToCart({ 
-        productId: prod._id,   
-        name: prod.name,
-        price: prod.price,
-        image: prod.images?.[0],
-        quantity: 1
-      }));
+        toast.success(` Added to cart !`);
+      } else {
+        dispatch(
+          addToCart({
+            productId: prod._id,
+            name: prod.name,
+            price: prod.price,
+            image: prod.images?.[0],
+            quantity: 1,
+          })
+        );
+
+        toast.success(` Added to cart !`);
+      }
+    } catch (err) {
+      toast.error("Failed to add item to cart ❌");
+      console.error("Error while adding the product to cart", err);
     }
-  } catch (err) {
-    console.log("Error while adding the product to cart");
-  }
-};
-
+  };
 
   return (
     <div key={prod._id} className="p-2">
       <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 relative group">
-        
-        {/* Product Image + Details go to Product Detail page */}
+        {/* Product Image */}
         <Link to={`/products/productDetail/${prod._id}`}>
           <div className="relative h-60 w-full flex justify-center items-center p-4 bg-gray-200">
             <img
@@ -66,13 +67,9 @@ const handleAddToCart = async () => {
           </div>
         </Link>
 
-        {/* Add To Cart (separate from Link) */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white
-         text-center opacity-0 group-hover:opacity-80 transition-opacity">
-          <button
-            onClick={handleAddToCart}
-            className="w-full font-semibold"
-          >
+        {/* Add To Cart */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white text-center opacity-0 group-hover:opacity-80 transition-opacity">
+          <button onClick={handleAddToCart} className="w-full font-semibold">
             Add To Cart
           </button>
         </div>
