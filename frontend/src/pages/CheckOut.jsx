@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useGetCartQuery } from "../redux/api/cart";
 import { useCreateOrderMutation } from "../redux/api/order";
 import { clearCart } from "../redux/slices/cartSlice";
+import toast from "react-hot-toast";
 
 const Checkout = () => {
   const { user } = useSelector((state) => state.user);
@@ -43,7 +44,7 @@ const Checkout = () => {
   e.preventDefault();
 
   if (!cartItems.length) {
-    alert("Your cart is empty!");
+    toast.error("Your cart is empty!")
     return;
   }
 
@@ -68,10 +69,11 @@ const Checkout = () => {
     console.log("✅ Order created:", res);
 
     dispatch(clearCart()); // clear cart
-    alert("Order placed successfully!");
+    toast.success("Order placed successfully!")
+    
   } catch (err) {
     console.error("❌ Failed to place order:", err);
-    alert("Failed to place order. Please try again.");
+    toast.error("Failed to place order. Please try again.")
   }
 };
 

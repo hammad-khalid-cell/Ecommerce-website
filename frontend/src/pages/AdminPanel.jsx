@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Dashboard from "../components/Dashboard";
 import CategoriesSection from "../components/categorySection";
 import ProductsSection from "../components/ProductSection";
+import OrdersSection from "../components/OrdersSection.jsx"
 import {
   useGetProductsQuery,
   useCreateProductsMutation,
@@ -15,6 +16,9 @@ import {
   useEditCategoryMutation,
   useGetCategoryQuery,
 } from "../redux/api/category";
+import {
+  useGetAllOrdersQuery,
+} from "../redux/api/order.js"
 import {useGetUsersQuery} from "../redux/api/users.js"
 import { Link } from "react-router-dom";
 import { setupListeners } from "@reduxjs/toolkit/query";
@@ -24,6 +28,7 @@ const AdminPanel = () => {
   const [currentView, setCurrentView] = useState("dashboard");
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -31,6 +36,7 @@ const AdminPanel = () => {
   const [users, setUsers] = useState([]);
 
   const{data: usersData} = useGetUsersQuery();
+  const {data:orderData}  =  useGetAllOrdersQuery();
 
   const {data: productsData} = useGetProductsQuery();
   const {data: categoryData} = useGetCategoryQuery();
@@ -61,8 +67,13 @@ const AdminPanel = () => {
     }
   },[usersData]);
 
+   useEffect(()=>{
+    if(orderData && Array.isArray(orderData)){
+      setOrders(orderData);
+    }
+  },[orderData]);
+
   useEffect(() => {
-    // In a real app, this would be a more robust token/role check
     const checkAuth = () => {
       setIsAdmin(true);
     };
@@ -225,6 +236,25 @@ const handleAddProduct = async (formPayload) => {
                 📦 Products
               </button>
             </li>
+             <li className="mt-2">
+              <button
+                onClick={() => {
+                  setCurrentView("orders");
+                  setIsAddingCategory(false);
+                  setIsAddingProduct(false);
+                  setEditingCategory(null);
+                  setEditingProduct(null);
+                }}
+                className={
+                  "w-full text-left py-2 px-4 rounded-lg transition-colors duration-200 " +
+                  (currentView === "orders"
+                    ? "bg-gray-700"
+                    : "hover:bg-gray-700")
+                }
+              >
+                📦 Orders
+              </button>
+            </li>
             <li className="mt-2">
               <Link to="/">
 
@@ -258,7 +288,7 @@ const handleAddProduct = async (formPayload) => {
 
         {/* Render content based on currentView */}
         {currentView === "dashboard" && (
-          <  Dashboard categories={categories} products={products} users = {users} />
+          <  Dashboard categories={categories} products={products} users = {users} orders= {orders}  />
         )}
         {currentView === "categories" && (
           <CategoriesSection
@@ -283,6 +313,11 @@ const handleAddProduct = async (formPayload) => {
             onAdd={handleAddProduct}
             onEdit={handleEditProduct}
             onDelete={handleDeleteProduct}
+          />
+        )}
+           {currentView === "orders" && (
+          <OrdersSection
+            orders= {orders}
           />
         )}
         

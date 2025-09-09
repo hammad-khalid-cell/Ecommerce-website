@@ -12,7 +12,13 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Order", "Cart"],
     }),
-
+    getAllOrders: builder.query({
+      query: () => ({
+        url: `${ORDERS_URL}`,
+        method: "GET",
+      }),
+      providesTags: ["Order"],
+    }),
     
     getMyOrders: builder.query({
       query: () => ({
@@ -48,4 +54,5 @@ export const {
   useGetMyOrdersQuery,
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
+  useGetAllOrdersQuery,
 } = orderApiSlice;
